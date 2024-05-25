@@ -1,1 +1,1 @@
-# tic-tac-toe-js
+# odin-tic-tac-toe-js
