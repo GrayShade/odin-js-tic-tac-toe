@@ -105,7 +105,7 @@ const gameObj = (() => {
     console.log('new Game Started');
   }
   return { play, quitGame, replayGame }
-});
+})();
 
 
 
