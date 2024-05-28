@@ -61,18 +61,18 @@ body {
   /* border: 1px solid white; */
 }
 
-#gboard {
+#board {
   display: grid;
   grid-template: 130px 130px 130px / 130px 130px 130px;
   padding: 2% 0% 3%;
 }
 
-.gboard-cell, 
-#gboard-cell-2, 
-#gboard-cell-4,
-#gboard-cell-5,
-#gboard-cell-6,
-#gboard-cell-8
+.board-cells, 
+#board-cell-2, 
+#board-cell-4,
+#board-cell-5,
+#board-cell-6,
+#board-cell-8
    {
     border: 5px white;
     border-radius: 5px;
@@ -84,17 +84,17 @@ body {
     align-items: center;
 }
 
-#gboard-cell-2, 
-#gboard-cell-8 {
+#board-cell-2, 
+#board-cell-8 {
   border-style: none solid;
 }
 
-#gboard-cell-4,
-#gboard-cell-6 {
+#board-cell-4,
+#board-cell-6 {
   border-style: solid none;
 }
 
-#gboard-cell-5 {
+#board-cell-5 {
   border: 5px solid white;
   border-radius: 5px;
   /* border-style: none solid; */
