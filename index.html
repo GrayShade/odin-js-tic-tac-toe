@@ -5,10 +5,64 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="./styles/reset.css">
   <link rel="stylesheet" href="./styles/styles.css">
-  <script type="text/javascript" src="./javascript/js.js"></script>
+  <script type="text/javascript" src="./javascript/js.js" defer></script>
   <title>Document</title>
 </head>
 <body>
-  
+  <div id="header">
+    <h1>TIC-TAC-TOE</h1>
+  </div>
+  <div id="main">
+    <div id="gboard">
+      <div id="gboard-cell-1" class="gboard-cell">O</div>
+      <div id="gboard-cell-2" class="gboard-cell">X</div>
+      <div id="gboard-cell-3" class="gboard-cell"></div>
+      <div id="gboard-cell-4" class="gboard-cell"></div>
+      <div id="gboard-cell-5" class="gboard-cell"></div>
+      <div id="gboard-cell-6" class="gboard-cell"></div>
+      <div id="gboard-cell-7" class="gboard-cell"></div>
+      <div id="gboard-cell-8" class="gboard-cell"></div>
+      <div id="gboard-cell-9" class="gboard-cell"></div>
+    </div>
+    <div id="game-options">
+      <p id="new-game-p" class="game-options-p">NEW GAME</p>
+      <p id="quit-game-p" class="game-options-p">QUIT GAME</p>
+      <p id="replay-game-p" class="game-options-p">REPLAY?</p>
+      <p id="player-turn-p" class="game-options-p"></p>
+    </div>
+    <!-- .....................modal related code:........................ -->
+    <div id="myModal" class="modal">
+      <div class="modal-content">
+        <div id="modal-content-form">
+          <form action="#" id="form" onsubmit="event.preventDefault();">
+            <div class="form-input-div">
+              <div class="label-and-tooltip-pair-div">
+                <label for="p1" class="heading">Player 1 Name:</label>
+                <span class="tooltip"
+                  data-tooltip="Minimum 1 & maximum 79 characters, no space at start/end & only single space between words">?</span>
+              </div>
+              <input type="text" class="optional form-inputs" id="p1" name="author" minlength="1" maxlength="79"
+                pattern="^[\w\S]+( [\w\S]+)*$">
+              <span class="optional message" id="author-message"></span>
+            </div>
+            <div class="form-input-div">
+              <div class="label-and-tooltip-pair-div">
+                <label for="p2" class="heading">Player 2 Name:</label>
+                <span class="tooltip"
+                  data-tooltip="Minimum 1 & maximum 79 characters, no space at start/end & only single space between words">?</span>
+              </div>
+              <input type="text" class="optional form-inputs" id="p2" name="author" minlength="1" maxlength="79"
+                pattern="^[\w\S]+( [\w\S]+)*$">
+              <span class="optional message" id="author-message"></span>
+            </div>
+          </form>
+          <button id="form-button" form="form" type="submit">Start Game</button>
+        </div>
+        <span class="close">&times;</span>
+      </div>
+    </div>
+    <!-- .....................model related code......................... ending here... -->
+  </div>
+  <div id="footer"></div>
 </body>
 </html>

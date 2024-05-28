@@ -1,0 +1,311 @@
+@font-face {
+  font-family: EraserRegular;
+  src: url(./../fonts/EraserRegular.ttf);
+}
+
+/* @font-face {
+  font-family: EraserDust;
+  src: url(./../fonts/EraserDust.ttf);
+} */
+
+* {
+  margin: 0;
+  border: none;
+}
+
+/* Below for displaying checkbox square. Absent previously due to CSS reset */
+input[type="checkbox"] {
+  appearance: auto;
+}
+
+input,
+select {
+  border: 1px solid grey;
+}
+
+:root {
+  height: 100vh;
+}
+
+body {
+  height: 100vh;
+  overflow: visible;
+  box-sizing: border-box;
+  margin: 0px;
+  appearance: none;
+  background-image: url(./../images/background.jpg);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+  font-family: EraserRegular;
+  /* font-family: EraserDust; */
+}
+
+#header {
+  height: 15%;
+  /* border: 1px solid white; */
+  display: flex;
+  font-size: 2em;
+  /* font-weight: 900; */
+  color: white;
+  justify-content: center;
+  align-items: center;
+}
+
+#main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* justify-content: space-around; */
+  height: 80%;
+  /* border: 1px solid white; */
+}
+
+#gboard {
+  display: grid;
+  grid-template: 130px 130px 130px / 130px 130px 130px;
+  padding: 2% 0% 3%;
+}
+
+.gboard-cell, 
+#gboard-cell-2, 
+#gboard-cell-4,
+#gboard-cell-5,
+#gboard-cell-6,
+#gboard-cell-8
+   {
+    border: 5px white;
+    border-radius: 5px;
+    color: white;
+    font-size: 5em;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#gboard-cell-2, 
+#gboard-cell-8 {
+  border-style: none solid;
+}
+
+#gboard-cell-4,
+#gboard-cell-6 {
+  border-style: solid none;
+}
+
+#gboard-cell-5 {
+  border: 5px solid white;
+  border-radius: 5px;
+  /* border-style: none solid; */
+}
+
+#game-options {
+  font-size: 3em;
+}
+
+.game-options-p {
+  color: white;
+  padding: 5px 0px;
+}
+
+#quit-game-p, #replay-game-p, #player-turn-p {
+  /* visibility: hidden; */
+  display: none;
+}
+
+#new-game-p {
+  cursor: pointer;
+}
+
+#form-button {
+  cursor: pointer;
+  padding: 10px 20px;
+  border-radius: 20px;
+  background: lightgreen;
+  color: forestgreen;
+  font-weight: bold;
+  margin-top: 10%;
+}
+
+#form-button:hover {
+  background: darkorange;
+  color: whitesmoke;
+}
+
+#myModal #form input,
+#myModal #form select {
+  padding: 5px;
+  width: 220px;
+  border-radius: 5px;
+  border: 1px solid #E5E7EB;
+}
+
+.message {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+}
+
+/* modal related code starting here... */
+.modal {
+  /* font-family: 'OpenSans'; */
+  /* font-family: 'cursive'; */
+  /* font-weight: bold; */
+  display: none;
+  position: fixed;
+  /* Sit on top */
+  z-index: 1;
+  /* Location of the box */
+  padding-top: 15%;
+
+  left: 0;
+  top: 0;
+  /* Full width */
+  width: 100%;
+  /* Full height */
+  height: 100%;
+  /* Enable scroll if needed */
+  overflow: auto;
+  /* Fallback color */
+  background-color: rgb(0, 0, 0);
+  /* Black w/ opacity */
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #fefefe;
+  margin: auto;
+  padding: 15px 30px 20px 30px;
+  border: 1px solid #888;
+  border-radius: 0px 10px 10px 0px;
+  width: 21%;
+  min-width: fit-content;
+}
+
+#modal-content-form {
+  padding: 20px 0px 0px;
+}
+
+#modal-content-form #form {
+  display: flex;
+  flex-direction: column;
+}
+
+
+.label-and-tooltip-pair-div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 1px;
+
+}
+
+.heading {
+  font-size: 0.98em;
+  letter-spacing: 0.03em;
+}
+
+input {
+  border-color: #E5E7EB;
+}
+
+input:focus {
+  outline: none;
+  border-color: blue;
+  box-shadow: 0 3px 6px 0 lightgray;
+
+}
+
+input:invalid,
+.error:invalid {
+  border-color: red;
+}
+
+/* below snippets taken from https://www.instantshift.com/2018/05/11/create-tooltip-using-css/ .....................*/
+.tooltip {
+  display: inline;
+  position: relative;
+  background: rgba(0, 0, 0, 0.1);
+  padding: 0px 5px;
+  border-radius: 100%;
+  font-size: 14px;
+  cursor: help;
+  opacity: 1;
+  display: none;
+}
+
+.tooltip::before,
+.tooltip::after {
+  position: absolute;
+  left: 50%;
+  opacity: 1;
+  transition: allease0.3s;
+}
+
+.tooltip::before {
+  content: "";
+  border-width: 10px 8px 08px;
+  border-style: solid;
+  border-color: rgba(0, 0, 0, 0.3) transparent transparent transparent;
+  top: -20px;
+  margin-left: -8px;
+}
+
+.tooltip::after {
+  content: attr(data-tooltip);
+  background: rgba(0, 0, 0, 0.3);
+  top: -20px;
+  transform: translateY(-100%);
+  font-size: 14px;
+  margin-left: -150px;
+  width: 300px;
+  border-radius: 10px;
+  color: #fff;
+  padding: 14px;
+}
+
+/* Hover states */
+
+.tooltip:hover::before,
+.tooltip:hover::after {
+  opacity: 1;
+}
+
+/*tooltip related code ending here...............................................................................  */
+
+.form-input-div {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin: 3% 0%;
+}
+
+.form-input-div label {
+  margin-bottom: 3px;
+}
+
+/* The Close Button */
+.close {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  align-self: flex-start;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* modal related code ending here... */
+
+#footer {
+  height: 5%;
+  /* border: 1px solid white; */
+}
