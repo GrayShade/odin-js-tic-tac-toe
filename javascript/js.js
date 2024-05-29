@@ -72,35 +72,51 @@ const displayObj = (() => {
     const boardNodeList = document.querySelectorAll('.board-cells');
     for (let i = 0; i < boardNodeList.length; i++) {
       boardNodeList[i].textContent = boardArr[i];
-      console.log(boardNodeList[i].textContent);
+      // console.log(boardNodeList[i].textContent);
     }
   }
-  const updateOptions = (showOption) => {
+  const updateOptions = (selectedOption = '', playerIcon = '') => {
     const newOptionEle = document.getElementById('new-game-p');
     const quitOptionEle = document.getElementById('quit-game-p');
     const replayOptionEle = document.getElementById('replay-game-p');
     const turnOptionEle = document.getElementById('player-turn-p');
-    const optionsArray = [newOptionEle, quitOptionEle, replayOptionEle, turnOptionEle]
-    // if(showOption == showOption) {
-      for (const ele of optionsArray) {
-        if(ele.id == showOption) {
-          ele.style.display = 'block';
-        }
-        else {
-          ele.style.display = 'none';
-        }
-
+    // const optionsArray = [newOptionEle, quitOptionEle, replayOptionEle, turnOptionEle]
+    // for (const ele of optionsArray) {
+    if (selectedOption == 'new-game-p') {
+      newOptionEle.style.display = 'none';
+      turnOptionEle.style.display = 'block';
+      turnOptionEle.textContent = `${playerIcon} move`;
+      quitOptionEle.style.display = 'block';
+      replayOptionEle.style.display = 'none';
+      
     }
-  } 
+    else
+      if (selectedOption == 'quit-game-p') {
+        quitOptionEle.style.display = 'none';
+        turnOptionEle.style.display = 'none';
+        newOptionEle.style.display = 'none';
+        replayOptionEle.style.display = 'block';
+      }
+      else 
+      if (selectedOption == 'replay-game-p') {
+        
+        turnOptionEle.style.display = 'none';
+        // turnOptionEle.textContent = `${playerIcon} move`
+        quitOptionEle.style.display = 'none';
+        replayOptionEle.style.display = 'none';
+        newOptionEle.style.display = 'block';
+      }
+    // }
+  }
   return { updateBoard, updateOptions }
 })();
 
 // Creating playerObj modulePattern:
 const playerObj = (() => {
-  const player1_icon = 'X';
-  const player2_icon = 'O';
-  const getPlayer1Icon = () => player1_icon;
-  const getPlayer2Icon = () => player2_icon;
+  const player1Icon = 'X';
+  const player2Icon = 'O';
+  const getPlayer1Icon = () => player1Icon;
+  const getPlayer2Icon = () => player2Icon;
   const getPlayer1Name = (id) => document.getElementById(id).value;
   const getPlayer2Name = (id) => document.getElementById(id).value;
   // returning icons & names via functions, so they can't be changed 
@@ -110,25 +126,75 @@ const playerObj = (() => {
 
 // Creating gameObj modulePattern:
 const gameObj = (() => {
-  const p1Name = playerObj.getPlayer1Name('p1');
-  const p2Name = playerObj.getPlayer2Name('p2');
-  const p1Icon = playerObj.getPlayer1Icon();
-  const p2Icon = playerObj.getPlayer2Icon();
-  const result = ''
-  const play = () => {
+  const result = '';
 
+  const play = () => {
+    const p1Name = playerObj.getPlayer1Name('p1');
+    const p2Name = playerObj.getPlayer2Name('p2');
+    const p1Icon = playerObj.getPlayer1Icon();
+    const p2Icon = playerObj.getPlayer2Icon();
     // For a new Game, first reset board:
     boardObj.resetBoard();
     displayObj.updateBoard(boardObj.boardArr);
-    // playRound();
-    displayObj.updateOptions('quit-game-p');
+
+    let p1Move = false;
+    let p2Move = false;
+    let firstMove = `${p1Icon}${p2Icon}`.charAt(Math.floor(Math.random() * 2));
+    if (firstMove == p1Icon) {
+      displayObj.updateOptions('new-game-p', p1Name);
+      p1Move = true;
+    }
+    else {
+      displayObj.updateOptions('new-game-p', p1Name);
+      p2Move = true;
+    }
+    // - Show player turn along with quit game option during game running:
+    // displayObj.updateOptions('quit-game-p');
+    const quitEle = document.getElementById('quit-game-p');
+    quitEle.addEventListener('click', (ele) => {
+      quitGame();
+    });
+    const replayEle = document.getElementById('replay-game-p');
+    replayEle.addEventListener('click', (ele) => {
+      replayGame();
+    });
+
+    const boardCellsArr = document.querySelectorAll('.board-cells');
+    boardCellsArr.forEach((arrEle) => {
+      arrEle.addEventListener('click', (ele) => {
+        if (boardObj.boardArr.includes('')) {
+          let currentMove;
+          let currentPlayer;
+          if (p1Move) {
+            currentMove = p1Icon;
+            currentPlayer = p1Name;
+
+            p1Move = false;
+            p2Move = true;
+          }
+          else {
+            currentMove = p2Icon;
+            currentPlayer = p2Name;
+            p2Move = false;
+            p1Move = true;
+          }
+        }
+      });
+    });
+
   }
 
   const quitGame = () => {
     console.log('Game is over');
+    boardObj.resetBoard();
+    displayObj.updateBoard(boardObj.boardArr);
+    displayObj.updateOptions('quit-game-p');
   }
   const replayGame = () => {
-    console.log('new Game Started');
+    // console.log('new Game Started');
+    boardObj.resetBoard();
+    displayObj.updateBoard(boardObj.boardArr);
+    displayObj.updateOptions('replay-game-p');
   }
   return { play, quitGame, replayGame }
 })();
