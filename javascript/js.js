@@ -121,7 +121,10 @@ const playerObj = (() => {
   const getPlayer2Name = (id) => document.getElementById(id).value;
   // returning icons & names via functions, so they can't be changed 
   // from outside module pattern like playerObj.getPlayer1Icon = 'Z'
-  return { getPlayer1Name, getPlayer2Name, getPlayer1Icon, getPlayer2Icon }
+  const getP1Info = {getPlayer1Name, getPlayer1Icon};
+  const getP2Info = {getPlayer2Name, getPlayer2Icon};
+  // return { getPlayer1Name, getPlayer2Name, getPlayer1Icon, getPlayer2Icon }
+  return {getP1Info, getP2Info}
 })();
 
 // Creating gameObj modulePattern:
@@ -129,14 +132,17 @@ const gameObj = (() => {
   const result = '';
 
   const play = () => {
-    const p1Name = playerObj.getPlayer1Name('p1');
-    const p2Name = playerObj.getPlayer2Name('p2');
-    const p1Icon = playerObj.getPlayer1Icon();
-    const p2Icon = playerObj.getPlayer2Icon();
+    // const p1Name = playerObj.getPlayer1Name('p1');
+    const p1Name = playerObj.getP1Info.getPlayer1Name('p1');
+    const p2Name = playerObj.getP2Info.getPlayer2Name('p2');
+    const p1Icon = playerObj.getP1Info.getPlayer1Icon();
+    const p2Icon = playerObj.getP2Info.getPlayer2Icon();
     // For a new Game, first reset board:
     boardObj.resetBoard();
     displayObj.updateBoard(boardObj.boardArr);
 
+    // let p1_move = playerObj.getP1Move();
+    // let p2_move = playerObj.getP2Move();
     let p1Move = false;
     let p2Move = false;
     let firstMove = `${p1Icon}${p2Icon}`.charAt(Math.floor(Math.random() * 2));
@@ -145,7 +151,7 @@ const gameObj = (() => {
       p1Move = true;
     }
     else {
-      displayObj.updateOptions('new-game-p', p1Name);
+      displayObj.updateOptions('new-game-p', p2Name);
       p2Move = true;
     }
     // - Show player turn along with quit game option during game running:
