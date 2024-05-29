@@ -63,7 +63,21 @@ let boardObj = (() => {
       boardArr[ele] = '';
     });
   }
-  return { boardArr, resetBoard }
+
+  // displayObj also has updateBoard method but it does not matter as
+  // to access that you have to use << displayObj.updateBoard() >>. To
+  // access boardObj's << updateBoard >>, gotta use << boardObj.updateBoard() >>.
+  // Thus module pattern helps in namespacing too to avoid naming collision. 
+  const updateBoard = (currentMove, ele) => {
+    const eleArr = document.querySelectorAll('.board-cells');
+    for (let i = 0; i < eleArr.length; i++) {
+      if (eleArr[i].id == ele.target.id) {
+        boardArr[i] = currentMove;
+      }
+    }
+    // console.log(ele.target.id);
+  }
+  return { boardArr, resetBoard, updateBoard }
 })();
 
 // Creating displayObj modulePattern:
@@ -88,7 +102,7 @@ const displayObj = (() => {
       turnOptionEle.textContent = `${playerIcon} move`;
       quitOptionEle.style.display = 'block';
       replayOptionEle.style.display = 'none';
-      
+
     }
     else
       if (selectedOption == 'quit-game-p') {
@@ -97,15 +111,15 @@ const displayObj = (() => {
         newOptionEle.style.display = 'none';
         replayOptionEle.style.display = 'block';
       }
-      else 
-      if (selectedOption == 'replay-game-p') {
-        
-        turnOptionEle.style.display = 'none';
-        // turnOptionEle.textContent = `${playerIcon} move`
-        quitOptionEle.style.display = 'none';
-        replayOptionEle.style.display = 'none';
-        newOptionEle.style.display = 'block';
-      }
+      else
+        if (selectedOption == 'replay-game-p') {
+
+          turnOptionEle.style.display = 'none';
+          // turnOptionEle.textContent = `${playerIcon} move`
+          quitOptionEle.style.display = 'none';
+          replayOptionEle.style.display = 'none';
+          newOptionEle.style.display = 'block';
+        }
     // }
   }
   return { updateBoard, updateOptions }
@@ -117,14 +131,38 @@ const playerObj = (() => {
   const player2Icon = 'O';
   const getPlayer1Icon = () => player1Icon;
   const getPlayer2Icon = () => player2Icon;
-  const getPlayer1Name = (id) => document.getElementById(id).value;
-  const getPlayer2Name = (id) => document.getElementById(id).value;
+  const getPlayer1Name = () => document.getElementById('p1').value;
+  const getPlayer2Name = () => document.getElementById('p2').value;
   // returning icons & names via functions, so they can't be changed 
   // from outside module pattern like playerObj.getPlayer1Icon = 'Z'
-  const getP1Info = {getPlayer1Name, getPlayer1Icon};
-  const getP2Info = {getPlayer2Name, getPlayer2Icon};
-  // return { getPlayer1Name, getPlayer2Name, getPlayer1Icon, getPlayer2Icon }
-  return {getP1Info, getP2Info}
+  const p1Info = { getPlayer1Name, getPlayer1Icon };
+  const p2Info = { getPlayer2Name, getPlayer2Icon };
+
+  let p1Move = false;
+  let p2Move = false;
+  // let getP1Move = () => p1Move;
+  // let getP2Move = () => p2Move;
+  let playerMoves = { p1Move, p2Move }
+  const getFirstMove = () => `${player1Icon}${player2Icon}`.charAt(Math.floor(Math.random() * 2));
+  const makeMove = () => {
+    let currentMove;
+    let currentPlayer;
+    if (p1Move) {
+      currentMove = player1Icon;
+      currentPlayer = getPlayer1Name();
+      p1Move = false;
+      p2Move = true;
+      return [currentMove, currentPlayer]
+    }
+    else {
+      currentMove = player2Icon;
+      currentPlayer = getPlayer2Name();
+      p2Move = false;
+      p1Move = true;
+      return [currentMove, currentPlayer]
+    }
+  }
+  return { p1Info, p2Info, getFirstMove, makeMove, playerMoves };
 })();
 
 // Creating gameObj modulePattern:
@@ -133,19 +171,19 @@ const gameObj = (() => {
 
   const play = () => {
     // const p1Name = playerObj.getPlayer1Name('p1');
-    const p1Name = playerObj.getP1Info.getPlayer1Name('p1');
-    const p2Name = playerObj.getP2Info.getPlayer2Name('p2');
-    const p1Icon = playerObj.getP1Info.getPlayer1Icon();
-    const p2Icon = playerObj.getP2Info.getPlayer2Icon();
+    const p1Name = playerObj.p1Info.getPlayer1Name('p1');
+    const p2Name = playerObj.p2Info.getPlayer2Name('p2');
+    const p1Icon = playerObj.p1Info.getPlayer1Icon();
+    const p2Icon = playerObj.p2Info.getPlayer2Icon();
     // For a new Game, first reset board:
     boardObj.resetBoard();
     displayObj.updateBoard(boardObj.boardArr);
 
     // let p1_move = playerObj.getP1Move();
     // let p2_move = playerObj.getP2Move();
-    let p1Move = false;
-    let p2Move = false;
-    let firstMove = `${p1Icon}${p2Icon}`.charAt(Math.floor(Math.random() * 2));
+    let p1Move = playerObj.playerMoves.p1Move;
+    let p2Move = playerObj.playerMoves.p2Move;
+    let firstMove = playerObj.getFirstMove();
     if (firstMove == p1Icon) {
       displayObj.updateOptions('new-game-p', p1Name);
       p1Move = true;
@@ -169,22 +207,21 @@ const gameObj = (() => {
     boardCellsArr.forEach((arrEle) => {
       arrEle.addEventListener('click', (ele) => {
         if (boardObj.boardArr.includes('')) {
-          let currentMove;
-          let currentPlayer;
-          if (p1Move) {
-            currentMove = p1Icon;
-            currentPlayer = p1Name;
-
-            p1Move = false;
-            p2Move = true;
-          }
-          else {
-            currentMove = p2Icon;
-            currentPlayer = p2Name;
-            p2Move = false;
-            p1Move = true;
+          let moveMade = playerObj.makeMove();
+          let currentMove = moveMade[0];
+          // let currentPlayer = moveMade[1];
+          boardObj.updateBoard(currentMove, ele);
+          displayObj.updateBoard(boardObj.boardArr);
+          if (boardObj.boardArr.includes('')) { 
+            alert('game over');
+            quitGame();
           }
         }
+        else {
+          alert('game over2')
+          quitGame();
+        }
+
       });
     });
 
