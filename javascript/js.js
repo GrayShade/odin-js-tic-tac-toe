@@ -117,7 +117,6 @@ const displayObj = (() => {
       turnOptionEle.textContent = `${playerName} move`;
       quitOptionEle.style.display = 'block';
       replayOptionEle.style.display = 'none';
-
     }
     else
       if (selectedOption == 'quit-game-p') {
@@ -135,7 +134,7 @@ const displayObj = (() => {
           // turnOptionEle.textContent = `${playerIcon} move`
           quitOptionEle.style.display = 'none';
           replayOptionEle.style.display = 'none';
-          // newOptionEle.style.display = 'block';
+          newOptionEle.style.display = 'block';
         }
 
     // }
