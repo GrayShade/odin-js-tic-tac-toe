@@ -28,6 +28,14 @@ const listenersSetUp = (() => {
     });
   })();
 
+
+  const boardCellsArr = document.querySelectorAll('.board-cells');
+  boardCellsArr.forEach((arrEle) => {
+    arrEle.addEventListener('click', (ele) => {
+      gameObj.processMove(ele);
+    });
+  });
+
   submitBtnId.addEventListener('click', e => {
     gameObj.play()
   });
@@ -38,7 +46,7 @@ const listenersSetUp = (() => {
     gameObj.replayGame();
   });
 
-  return { newGameId, quitGameID, replayGameId, playerTurnId, submitBtnId }
+  // return { newGameId, quitGameID, replayGameId, playerTurnId, submitBtnId }
 })();
 // .....................listeners module pattern ending here.......................
 
@@ -59,9 +67,9 @@ let boardObj = (() => {
 
   // reset board function
   const resetBoard = () => {
-    boardArr.forEach(ele => {
-      boardArr[ele] = '';
-    });
+    for (let i = 0; i < boardArr.length; i++) {
+      boardArr[i] = '';
+    }
   }
 
   // displayObj also has updateBoard method but it does not matter as
@@ -144,7 +152,7 @@ const playerObj = (() => {
   // let getP2Move = () => p2Move;
   let playerMoves = { p1Move, p2Move }
   const getFirstMove = () => `${player1Icon}${player2Icon}`.charAt(Math.floor(Math.random() * 2));
-  const makeMove = () => {
+  const getMove = () => {
     let currentMove;
     let currentPlayer;
     if (p1Move) {
@@ -162,7 +170,7 @@ const playerObj = (() => {
       return [currentMove, currentPlayer]
     }
   }
-  return { p1Info, p2Info, getFirstMove, makeMove, playerMoves };
+  return { p1Info, p2Info, getFirstMove, getMove, playerMoves };
 })();
 
 // Creating gameObj modulePattern:
@@ -194,40 +202,47 @@ const gameObj = (() => {
     }
     // - Show player turn along with quit game option during game running:
     // displayObj.updateOptions('quit-game-p');
-    const quitEle = document.getElementById('quit-game-p');
-    quitEle.addEventListener('click', (ele) => {
-      quitGame();
-    });
-    const replayEle = document.getElementById('replay-game-p');
-    replayEle.addEventListener('click', (ele) => {
-      replayGame();
-    });
+    // const quitEle = document.getElementById('quit-game-p');
+    // quitEle.addEventListener('click', (ele) => {
+    //   quitGame();
+    // });
+    // const replayEle = document.getElementById('replay-game-p');
+    // replayEle.addEventListener('click', (ele) => {
+    //   replayGame();
+    // });
 
-    const boardCellsArr = document.querySelectorAll('.board-cells');
-    boardCellsArr.forEach((arrEle) => {
-      arrEle.addEventListener('click', (ele) => {
-        if (boardObj.boardArr.includes('')) {
-          let moveMade = playerObj.makeMove();
-          let currentMove = moveMade[0];
-          // let currentPlayer = moveMade[1];
-          boardObj.updateBoard(currentMove, ele);
-          displayObj.updateBoard(boardObj.boardArr);
-          if (boardObj.boardArr.includes('')) { 
-            alert('game over');
-            quitGame();
-          }
-        }
-        else {
-          alert('game over2')
-          quitGame();
-        }
+    
+    // const boardCellsArr = document.querySelectorAll('.board-cells');
+    // boardCellsArr.forEach((arrEle) => {
+    //   arrEle.addEventListener('click', (ele) => {
 
-      });
-    });
+    //   });
+    // });
 
   }
 
+  const processMove = (ele) => {
+    if (boardObj.boardArr.includes('')) {
+      let moveMade = playerObj.getMove();
+      let currentMove = moveMade[0];
+      // let currentPlayer = moveMade[1];
+      boardObj.updateBoard(currentMove, ele);
+      displayObj.updateBoard(boardObj.boardArr);
+      if (!boardObj.boardArr.includes('')) {
+        // remove below
+        alert('game over');
+        quitGame();
+      }
+    }
+    else {
+      // remove below
+      alert('game over2')
+      quitGame();
+    }
+  }
+
   const quitGame = () => {
+    // remove below
     console.log('Game is over');
     boardObj.resetBoard();
     displayObj.updateBoard(boardObj.boardArr);
@@ -239,7 +254,7 @@ const gameObj = (() => {
     displayObj.updateBoard(boardObj.boardArr);
     displayObj.updateOptions('replay-game-p');
   }
-  return { play, quitGame, replayGame }
+  return { play, processMove, quitGame, replayGame }
 })();
 
 
