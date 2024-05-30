@@ -41,7 +41,10 @@ const listenersSetUp = (() => {
   });
 
   submitBtnId.addEventListener('click', e => {
-    gameObj.play()
+    // hide card for player names automatically:
+    const modal = document.getElementById('myModal');
+    modal.style.display = 'none';
+    gameObj.play();
   });
   quitGameID.addEventListener('click', e => {
     gameObj.quitGame();
@@ -125,14 +128,16 @@ const displayObj = (() => {
       }
       else
         if (selectedOption == 'replay-game-p') {
-
+          // Show card for player names on clicking replay:
+          const modal = document.getElementById('myModal');
+          modal.style.display = 'block';
           turnOptionEle.style.display = 'none';
           // turnOptionEle.textContent = `${playerIcon} move`
           quitOptionEle.style.display = 'none';
           replayOptionEle.style.display = 'none';
-          newOptionEle.style.display = 'block';
+          // newOptionEle.style.display = 'block';
         }
-        
+
     // }
   }
   return { updateBoard, updateOptions }
@@ -177,7 +182,7 @@ const playerObj = (() => {
       p1Move = true;
       // return {currentMove, currentPlayer, nextPlayer}
     }
-    return {currentMove, currentPlayer, nextPlayer}
+    return { currentMove, currentPlayer, nextPlayer }
   }
   return { p1Info, p2Info, getFirstMove, getMove, playerMoves };
 })();
@@ -220,7 +225,7 @@ const gameObj = (() => {
     //   replayGame();
     // });
 
-    
+
     // const boardCellsArr = document.querySelectorAll('.board-cells');
     // boardCellsArr.forEach((arrEle) => {
     //   arrEle.addEventListener('click', (ele) => {
