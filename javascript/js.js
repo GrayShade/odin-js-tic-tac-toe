@@ -101,17 +101,17 @@ const displayObj = (() => {
       // console.log(boardNodeList[i].textContent);
     }
   }
-  const updateOptions = (selectedOption = '', playerIcon = '') => {
+  const updateOptions = (selectedOption = '', playerName = '') => {
     const newOptionEle = document.getElementById('new-game-p');
     const quitOptionEle = document.getElementById('quit-game-p');
     const replayOptionEle = document.getElementById('replay-game-p');
     const turnOptionEle = document.getElementById('player-turn-p');
     // const optionsArray = [newOptionEle, quitOptionEle, replayOptionEle, turnOptionEle]
     // for (const ele of optionsArray) {
-    if (selectedOption == 'new-game-p') {
+    if (selectedOption == 'new-game-p' || selectedOption == 'player-turn-p') {
       newOptionEle.style.display = 'none';
       turnOptionEle.style.display = 'block';
-      turnOptionEle.textContent = `${playerIcon} move`;
+      turnOptionEle.textContent = `${playerName} move`;
       quitOptionEle.style.display = 'block';
       replayOptionEle.style.display = 'none';
 
@@ -132,6 +132,7 @@ const displayObj = (() => {
           replayOptionEle.style.display = 'none';
           newOptionEle.style.display = 'block';
         }
+        
     // }
   }
   return { updateBoard, updateOptions }
@@ -159,20 +160,24 @@ const playerObj = (() => {
   const getMove = () => {
     let currentMove;
     let currentPlayer;
+    let nextPlayer;
     if (p1Move) {
       currentMove = player1Icon;
       currentPlayer = getPlayer1Name();
+      nextPlayer = getPlayer2Name();
       p1Move = false;
       p2Move = true;
-      return [currentMove, currentPlayer]
+      // return {currentMove, currentPlayer, nextPlayer}
     }
     else {
       currentMove = player2Icon;
       currentPlayer = getPlayer2Name();
+      nextPlayer = getPlayer1Name();
       p2Move = false;
       p1Move = true;
-      return [currentMove, currentPlayer]
+      // return {currentMove, currentPlayer, nextPlayer}
     }
+    return {currentMove, currentPlayer, nextPlayer}
   }
   return { p1Info, p2Info, getFirstMove, getMove, playerMoves };
 })();
@@ -228,10 +233,11 @@ const gameObj = (() => {
   const processMove = (ele) => {
     if (boardObj.boardArr.includes('')) {
       let moveMade = playerObj.getMove();
-      let currentMove = moveMade[0];
-      // let currentPlayer = moveMade[1];
+      let currentMove = moveMade['currentMove'];
+      let nextPlayer = moveMade['nextPlayer'];
       boardObj.updateBoard(currentMove, ele);
       displayObj.updateBoard(boardObj.boardArr);
+      displayObj.updateOptions('player-turn-p', nextPlayer);
       if (!boardObj.boardArr.includes('')) {
         // remove below
         quitGame();
