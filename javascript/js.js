@@ -28,7 +28,11 @@ const listenersSetUp = (() => {
     });
   })();
 
-
+  // Previously, below listener was in play() in gameObj but it formed a closure to
+  // play() as a listener is kept alive. After clicking replay, when a new game is 
+  // started, another listener is formed while previous one still present.
+  // Lesson learned. Make sure listeners are called one time only  or overwrite
+  // previous ones, Not form closures
   const boardCellsArr = document.querySelectorAll('.board-cells');
   boardCellsArr.forEach((arrEle) => {
     arrEle.addEventListener('click', (ele) => {
@@ -230,13 +234,11 @@ const gameObj = (() => {
       displayObj.updateBoard(boardObj.boardArr);
       if (!boardObj.boardArr.includes('')) {
         // remove below
-        alert('game over');
         quitGame();
       }
     }
     else {
       // remove below
-      alert('game over2')
       quitGame();
     }
   }
@@ -244,7 +246,7 @@ const gameObj = (() => {
   const quitGame = () => {
     // remove below
     console.log('Game is over');
-    boardObj.resetBoard();
+    // boardObj.resetBoard();
     displayObj.updateBoard(boardObj.boardArr);
     displayObj.updateOptions('quit-game-p');
   }
