@@ -3,12 +3,10 @@ const listenersSetUp = (() => {
   const newGameId = document.getElementById('new-game-p');
   const quitGameID = document.getElementById('quit-game-p');
   const replayGameId = document.getElementById('replay-game-p');
-  const playerTurnId = document.getElementById('player-turn-p');
   const submitBtnId = document.getElementById('form-button');
 
   const setModel = (() => {
     const modal = document.getElementById('myModal');
-    // const btn = document.getElementById('header-btn');
     const span = document.getElementsByClassName("close")[0];
 
     newGameId.addEventListener('click', e => {
@@ -28,8 +26,8 @@ const listenersSetUp = (() => {
     });
   })();
 
-  // Previously, below listener was in play() in gameObj but it formed a closure to
-  // play() as a listener is kept alive. After clicking replay, when a new game is 
+  // Previously, below listener was in start() in gameObj but it formed a closure to
+  // start() as a listener is kept alive. After clicking replay, when a new game is 
   // started, another listener is formed while previous one still present.
   // Lesson learned. Make sure listeners are called one time only  or overwrite
   // previous ones, Not form closures
@@ -44,7 +42,7 @@ const listenersSetUp = (() => {
     // hide card for player names automatically:
     const modal = document.getElementById('myModal');
     modal.style.display = 'none';
-    gameObj.play();
+    gameObj.start();
   });
   quitGameID.addEventListener('click', e => {
     gameObj.quitGame();
@@ -53,7 +51,6 @@ const listenersSetUp = (() => {
     gameObj.replayGame();
   });
 
-  // return { newGameId, quitGameID, replayGameId, playerTurnId, submitBtnId }
 })();
 // .....................listeners module pattern ending here.......................
 
@@ -90,7 +87,6 @@ let boardObj = (() => {
         boardArr[i] = currentMove;
       }
     }
-    // console.log(ele.target.id);
   }
   return { boardArr, resetBoard, updateBoard }
 })();
@@ -101,7 +97,6 @@ const displayObj = (() => {
     const boardNodeList = document.querySelectorAll('.board-cells');
     for (let i = 0; i < boardNodeList.length; i++) {
       boardNodeList[i].textContent = boardArr[i];
-      // console.log(boardNodeList[i].textContent);
     }
   }
   const updateOptions = (selectedOption = '', playerName = '') => {
@@ -109,8 +104,6 @@ const displayObj = (() => {
     const quitOptionEle = document.getElementById('quit-game-p');
     const replayOptionEle = document.getElementById('replay-game-p');
     const turnOptionEle = document.getElementById('player-turn-p');
-    // const optionsArray = [newOptionEle, quitOptionEle, replayOptionEle, turnOptionEle]
-    // for (const ele of optionsArray) {
     if (selectedOption == 'new-game-p' || selectedOption == 'player-turn-p') {
       newOptionEle.style.display = 'none';
       turnOptionEle.style.display = 'block';
@@ -131,13 +124,10 @@ const displayObj = (() => {
           const modal = document.getElementById('myModal');
           modal.style.display = 'block';
           turnOptionEle.style.display = 'none';
-          // turnOptionEle.textContent = `${playerIcon} move`
           quitOptionEle.style.display = 'none';
           replayOptionEle.style.display = 'none';
           newOptionEle.style.display = 'block';
         }
-
-    // }
   }
   return { updateBoard, updateOptions }
 })();
@@ -146,22 +136,20 @@ const displayObj = (() => {
 const playerObj = (() => {
   const player1Icon = 'X';
   const player2Icon = 'O';
-  const getPlayer1Icon = () => player1Icon;
-  const getPlayer2Icon = () => player2Icon;
+  const getP1Icon = () => player1Icon;
+  const getP2Icon = () => player2Icon;
   const getPlayer1Name = () => document.getElementById('p1').value;
   const getPlayer2Name = () => document.getElementById('p2').value;
   // returning icons & names via functions, so they can't be changed 
-  // from outside module pattern like playerObj.getPlayer1Icon = 'Z'
-  const p1Info = { getPlayer1Name, getPlayer1Icon };
-  const p2Info = { getPlayer2Name, getPlayer2Icon };
+  // from outside module pattern like playerObj.getP1Icon = 'Z'
+  const p1Info = { getPlayer1Name, getP1Icon };
+  const p2Info = { getPlayer2Name, getP2Icon };
 
   let p1Move = false;
   let p2Move = false;
-  // let getP1Move = () => p1Move;
-  // let getP2Move = () => p2Move;
-  let playerMoves = { p1Move, p2Move }
+  let moveAllowedStatus = { p1Move, p2Move }
   const getFirstMove = () => `${player1Icon}${player2Icon}`.charAt(Math.floor(Math.random() * 2));
-  const getMove = () => {
+  const getMoveAndPlayers = () => {
     let currentMove;
     let currentPlayer;
     let nextPlayer;
@@ -171,7 +159,6 @@ const playerObj = (() => {
       nextPlayer = getPlayer2Name();
       p1Move = false;
       p2Move = true;
-      // return {currentMove, currentPlayer, nextPlayer}
     }
     else {
       currentMove = player2Icon;
@@ -179,94 +166,64 @@ const playerObj = (() => {
       nextPlayer = getPlayer1Name();
       p2Move = false;
       p1Move = true;
-      // return {currentMove, currentPlayer, nextPlayer}
     }
     return { currentMove, currentPlayer, nextPlayer }
   }
-  return { p1Info, p2Info, getFirstMove, getMove, playerMoves };
+  return { p1Info, p2Info, getFirstMove, getMoveAndPlayers, moveAllowedStatus };
 })();
 
 // Creating gameObj modulePattern:
 const gameObj = (() => {
-  const result = '';
 
-  const play = () => {
-    // const p1Name = playerObj.getPlayer1Name('p1');
+
+  const start = () => {
     const p1Name = playerObj.p1Info.getPlayer1Name('p1');
     const p2Name = playerObj.p2Info.getPlayer2Name('p2');
-    const p1Icon = playerObj.p1Info.getPlayer1Icon();
-    const p2Icon = playerObj.p2Info.getPlayer2Icon();
+    const p1Icon = playerObj.p1Info.getP1Icon();
     // For a new Game, first reset board:
     boardObj.resetBoard();
     displayObj.updateBoard(boardObj.boardArr);
-
-    // let p1_move = playerObj.getP1Move();
-    // let p2_move = playerObj.getP2Move();
-    let p1Move = playerObj.playerMoves.p1Move;
-    let p2Move = playerObj.playerMoves.p2Move;
     let firstMove = playerObj.getFirstMove();
     if (firstMove == p1Icon) {
       displayObj.updateOptions('new-game-p', p1Name);
-      p1Move = true;
     }
     else {
       displayObj.updateOptions('new-game-p', p2Name);
-      p2Move = true;
     }
-    // - Show player turn along with quit game option during game running:
-    // displayObj.updateOptions('quit-game-p');
-    // const quitEle = document.getElementById('quit-game-p');
-    // quitEle.addEventListener('click', (ele) => {
-    //   quitGame();
-    // });
-    // const replayEle = document.getElementById('replay-game-p');
-    // replayEle.addEventListener('click', (ele) => {
-    //   replayGame();
-    // });
-
-
-    // const boardCellsArr = document.querySelectorAll('.board-cells');
-    // boardCellsArr.forEach((arrEle) => {
-    //   arrEle.addEventListener('click', (ele) => {
-
-    //   });
-    // });
-
   }
 
   const processMove = (ele) => {
     if (boardObj.boardArr.includes('')) {
-      let moveMade = playerObj.getMove();
+      let moveMade = playerObj.getMoveAndPlayers();
       let currentMove = moveMade['currentMove'];
       let nextPlayer = moveMade['nextPlayer'];
       boardObj.updateBoard(currentMove, ele);
+      checkResult(boardObj.boardArr, p1Icon, p2Icon,  );
       displayObj.updateBoard(boardObj.boardArr);
       displayObj.updateOptions('player-turn-p', nextPlayer);
       if (!boardObj.boardArr.includes('')) {
-        // remove below
         quitGame();
       }
     }
     else {
-      // remove below
       quitGame();
     }
   }
 
+  const checkResult = () => {
+    
+  }
+
   const quitGame = () => {
-    // remove below
-    console.log('Game is over');
-    // boardObj.resetBoard();
     displayObj.updateBoard(boardObj.boardArr);
     displayObj.updateOptions('quit-game-p');
   }
   const replayGame = () => {
-    // console.log('new Game Started');
     boardObj.resetBoard();
     displayObj.updateBoard(boardObj.boardArr);
     displayObj.updateOptions('replay-game-p');
   }
-  return { play, processMove, quitGame, replayGame }
+  return { start, processMove, quitGame, replayGame }
 })();
 
 
