@@ -174,12 +174,12 @@ const playerObj = (() => {
 
 // Creating gameObj modulePattern:
 const gameObj = (() => {
-
-
+  let winner = '';
+  const p1Name = playerObj.p1Info.getPlayer1Name('p1');
+  const p2Name = playerObj.p2Info.getPlayer2Name('p2');
+  const p1Icon = playerObj.p1Info.getP1Icon();
+  const p2Icon = playerObj.p2Info.getP2Icon();
   const start = () => {
-    const p1Name = playerObj.p1Info.getPlayer1Name('p1');
-    const p2Name = playerObj.p2Info.getPlayer2Name('p2');
-    const p1Icon = playerObj.p1Info.getP1Icon();
     // For a new Game, first reset board:
     boardObj.resetBoard();
     displayObj.updateBoard(boardObj.boardArr);
@@ -198,10 +198,11 @@ const gameObj = (() => {
       let currentMove = moveMade['currentMove'];
       let nextPlayer = moveMade['nextPlayer'];
       boardObj.updateBoard(currentMove, ele);
-      checkResult(boardObj.boardArr, p1Icon, p2Icon,  );
-      displayObj.updateBoard(boardObj.boardArr);
-      displayObj.updateOptions('player-turn-p', nextPlayer);
-      if (!boardObj.boardArr.includes('')) {
+      const result = checkResult(p1Name, p2Name, p1Icon, p2Icon);
+      if (boardObj.boardArr.includes('')) {
+        displayObj.updateBoard(boardObj.boardArr);
+        displayObj.updateOptions('player-turn-p', nextPlayer);
+      } else {
         quitGame();
       }
     }
@@ -210,8 +211,35 @@ const gameObj = (() => {
     }
   }
 
-  const checkResult = () => {
-    
+  const checkResult = (p1Name, p2Name, p1Icon, p2Icon) => {
+    winner = ''
+    // const boardArr = boardObj.boardArr;
+    const boardArr = ['X', 'X', 'X', '', '', '', '', '', '']
+    // using nested loops to check the winning combinations
+    //  for x, y & diagonal axis:
+    for (let outer = 0; outer <= boardArr.length; outer + 3) {
+      let countP1Icon = 0;
+      let countP2Icon = 0;
+      for (let x = outer; x <= outer + 2; ++x) {
+        if (boardArr[x] == p1Icon) {
+          countP1Icon++;
+        }
+        else
+          if (boardArr[x] == p2Icon) {
+            countP2Icon++;
+          }
+      }
+      if (countP1Icon == 3) {
+        winner = p1Name;
+        break;
+      }
+      else
+        if (countP2Icon == 3) {
+          winner = p2Name;
+          break;
+        }
+    }
+    return { winner }
   }
 
   const quitGame = () => {
