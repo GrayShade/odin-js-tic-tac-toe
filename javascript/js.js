@@ -69,6 +69,8 @@ let boardObj = (() => {
     boardArr.push('');
   }
 
+  const getBoard = () => boardArr;
+
   // reset board function
   const resetBoard = () => {
     for (let i = 0; i < boardArr.length; i++) {
@@ -88,7 +90,7 @@ let boardObj = (() => {
       }
     }
   }
-  return { boardArr, resetBoard, updateBoard }
+  return { getBoard, resetBoard, updateBoard }
 })();
 
 // Creating displayObj modulePattern:
@@ -206,7 +208,7 @@ const gameObj = (() => {
     // const p2Icon = playerObj.p2Info.getP2Icon();
     // For a new Game, first reset board:
     boardObj.resetBoard();
-    displayObj.updateBoard(boardObj.boardArr);
+    displayObj.updateBoard(boardObj.getBoard());
     let firstMove = playerObj.getMoveAndPlayers().getFirstMove();
     if (firstMove == p1Icon) {
       displayObj.updateOptions('new-game-p', `${p1Name} move`);
@@ -221,20 +223,20 @@ const gameObj = (() => {
     // const p2Name = playerObj.p2Info.getP2Name('p2');
     // const p1Icon = playerObj.p1Info.getP1Icon();
     // const p2Icon = playerObj.p2Info.getP2Icon();
-    if (boardObj.boardArr.includes('')) {
+    if (boardObj.getBoard().includes('')) {
       let moveMade = playerObj.getMoveAndPlayers();
       let currentMove = moveMade['currentMove'];
       let nextPlayer = moveMade['nextPlayer'];
       boardObj.updateBoard(currentMove, ele);
-      displayObj.updateBoard(boardObj.boardArr);
+      displayObj.updateBoard(boardObj.getBoard());
       processMoveResult();
       if (winner != '') {
         displayObj.updateOptions('quit-game-p', `${winner} won!`);
       }else
-      if (winner == '' && boardObj.boardArr.includes('')) {
-        displayObj.updateOptions('player-turn-p', nextPlayer);
+      if (winner == '' && boardObj.getBoard().includes('')) {
+        displayObj.updateOptions('player-turn-p', `${nextPlayer} move`);
       }else
-      if (winner == '' && !(boardObj.boardArr.includes(''))) {
+      if (winner == '' && !(boardObj.getBoard().includes(''))) {
         displayObj.updateOptions('quit-game-p', `game is draw!`);
       } else{
         quitGame();
@@ -247,7 +249,7 @@ const gameObj = (() => {
 
   const processMoveResult = () => {
     // const boardArr = boardObj.boardArr;
-    const boardArr = ['X', 'O', 'X', 'O', 'O', 'O', '', '', '']
+    // const boardArr = ['X', 'O', 'X', 'O', 'O', 'O', '', '', '']
     // using nested loops to check the winning combinations
     //  for x, y & diagonal axis:
     
@@ -293,7 +295,8 @@ const gameObj = (() => {
     const p2Name = playerObj.p2Info.getP2Name('p2');
     const p1Icon = playerObj.p1Info.getP1Icon();
     const p2Icon = playerObj.p2Info.getP2Icon();
-    const boardArr = ['X', 'O', 'X', 'O', 'O', 'O', '', '', '']
+    // const boardArr = ['X', 'O', 'X', 'O', 'O', 'O', '', '', '']
+    const boardArr  = boardObj.getBoard();
     if (boardArr[x] == p1Icon) {
       playerObj.p1Info.addToCountP1Icon();
       if (playerObj.p1Info.getCountP1Icon() == 3) {
@@ -313,12 +316,12 @@ const gameObj = (() => {
   }
 
   const quitGame = () => {
-    displayObj.updateBoard(boardObj.boardArr);
+    displayObj.updateBoard(boardObj.getBoard());
     displayObj.updateOptions('quit-game-p', `${playerObj.getMoveAndPlayers().currentPlayer} quit...`);
   }
   const replayGame = () => {
     boardObj.resetBoard();
-    displayObj.updateBoard(boardObj.boardArr);
+    displayObj.updateBoard(boardObj.getBoard());
     displayObj.updateOptions('replay-game-p', 'Enter Names');
   }
   return { start, processMove, quitGame, replayGame }

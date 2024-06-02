@@ -116,7 +116,7 @@ body {
   display: none;
 }
 
-#new-game-p {
+#new-game-p, #replay-game-p, #quit-game-p {
   cursor: pointer;
 }
 
