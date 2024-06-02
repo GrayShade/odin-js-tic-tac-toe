@@ -314,7 +314,7 @@ const gameObj = (() => {
 
   const quitGame = () => {
     displayObj.updateBoard(boardObj.boardArr);
-    displayObj.updateOptions('quit-game-p', 'Game quit ');
+    displayObj.updateOptions('quit-game-p', `${playerObj.getMoveAndPlayers().currentPlayer} quit...`);
   }
   const replayGame = () => {
     boardObj.resetBoard();
