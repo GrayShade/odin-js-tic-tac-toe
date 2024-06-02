@@ -99,23 +99,27 @@ const displayObj = (() => {
       boardNodeList[i].textContent = boardArr[i];
     }
   }
-  const updateOptions = (selectedOption = '', playerName = '') => {
+  const updateOptions = (selectedOption = '', message = '') => {
     const newOptionEle = document.getElementById('new-game-p');
     const quitOptionEle = document.getElementById('quit-game-p');
     const replayOptionEle = document.getElementById('replay-game-p');
     const turnOptionEle = document.getElementById('player-turn-p');
+    const messageEle = document.getElementById('message-p');
     if (selectedOption == 'new-game-p' || selectedOption == 'player-turn-p') {
       newOptionEle.style.display = 'none';
-      turnOptionEle.style.display = 'block';
-      turnOptionEle.textContent = `${playerName} move`;
+      messageEle.style.display = 'block';
+      messageEle.textContent = message;
       quitOptionEle.style.display = 'block';
       replayOptionEle.style.display = 'none';
     }
     else
       if (selectedOption == 'quit-game-p') {
+
         quitOptionEle.style.display = 'none';
         turnOptionEle.style.display = 'none';
         newOptionEle.style.display = 'none';
+        messageEle.style.display = 'block';
+        messageEle.textContent = message;
         replayOptionEle.style.display = 'block';
       }
       else
@@ -126,14 +130,15 @@ const displayObj = (() => {
           turnOptionEle.style.display = 'none';
           quitOptionEle.style.display = 'none';
           replayOptionEle.style.display = 'none';
-          newOptionEle.style.display = 'block';
+          messageEle.style.display = 'block';
+          messageEle.textContent = message;
         }
   }
 
   const announceResult = (winner = '', resultType) => {
     if (winner != '') {
-      updateOptions('quit-game-p');
-      
+      updateOptions('announcement-p');
+
     }
   }
   return { updateBoard, updateOptions }
@@ -192,8 +197,8 @@ const playerObj = (() => {
 // Creating gameObj modulePattern:
 const gameObj = (() => {
   let winner = '';
-  let countP1Icon = 0;
-  let countP2Icon = 0;
+  // let countP1Icon = 0;
+  // let countP2Icon = 0;
   const start = () => {
     const p1Name = playerObj.p1Info.getP1Name('p1');
     const p2Name = playerObj.p2Info.getP2Name('p2');
@@ -204,18 +209,18 @@ const gameObj = (() => {
     displayObj.updateBoard(boardObj.boardArr);
     let firstMove = playerObj.getMoveAndPlayers().getFirstMove();
     if (firstMove == p1Icon) {
-      displayObj.updateOptions('new-game-p', p1Name);
+      displayObj.updateOptions('new-game-p', `${p1Name} move`);
     }
     else {
-      displayObj.updateOptions('new-game-p', p2Name);
+      displayObj.updateOptions('new-game-p', `${p2Name} move`);
     }
   }
 
   const processMove = (ele) => {
-    const p1Name = playerObj.p1Info.getP1Name('p1');
-    const p2Name = playerObj.p2Info.getP2Name('p2');
-    const p1Icon = playerObj.p1Info.getP1Icon();
-    const p2Icon = playerObj.p2Info.getP2Icon();
+    // const p1Name = playerObj.p1Info.getP1Name('p1');
+    // const p2Name = playerObj.p2Info.getP2Name('p2');
+    // const p1Icon = playerObj.p1Info.getP1Icon();
+    // const p2Icon = playerObj.p2Info.getP2Icon();
     if (boardObj.boardArr.includes('')) {
       let moveMade = playerObj.getMoveAndPlayers();
       let currentMove = moveMade['currentMove'];
@@ -224,13 +229,13 @@ const gameObj = (() => {
       displayObj.updateBoard(boardObj.boardArr);
       processMoveResult();
       if (winner != '') {
-        displayObj.announceResult(winner, 'win');
+        displayObj.updateOptions('quit-game-p', `${winner} won!`);
       }else
       if (winner == '' && boardObj.boardArr.includes('')) {
         displayObj.updateOptions('player-turn-p', nextPlayer);
       }else
       if (winner == '' && !(boardObj.boardArr.includes(''))) {
-        displayObj.announceResult('draw');
+        displayObj.updateOptions('quit-game-p', `game is draw!`);
       } else{
         quitGame();
       }
@@ -309,12 +314,12 @@ const gameObj = (() => {
 
   const quitGame = () => {
     displayObj.updateBoard(boardObj.boardArr);
-    displayObj.updateOptions('quit-game-p');
+    displayObj.updateOptions('quit-game-p', 'Game quit ');
   }
   const replayGame = () => {
     boardObj.resetBoard();
     displayObj.updateBoard(boardObj.boardArr);
-    displayObj.updateOptions('replay-game-p');
+    displayObj.updateOptions('replay-game-p', 'Enter Names');
   }
   return { start, processMove, quitGame, replayGame }
 })();
