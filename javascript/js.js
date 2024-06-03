@@ -271,11 +271,72 @@ const gameObj = (() => {
   }
 
   function checkRows() {
-    for (let outer = 0; outer <= 6; outer += 3) {
+    const outerLoopObj = { 'start': 0, 'con': 6, 'inc': 3 };
+    const innerLoopObj = { 'start': 0, 'con': 2, 'inc': 1 };
+    loopThroughMoves(outerLoopObj, innerLoopObj)
+    // for (let outer = 0; outer <= 6; outer += 3) {
+    //   playerObj.resetIconCount();
+    //   // playerObj.p2Info.addToCountP2Icon();
+    //   // countP2Icon = 0;
+    //   for (let x = outer; x <= outer + 2; ++x) {
+    //     checkWinner(x);
+    //   }
+    //   if (winner != '') {
+    //     return
+    //   }
+    // }
+  }
+
+  function checkColumns() {
+    const outerLoopObj = { 'start': 0, 'con': 2, 'inc': 1 };
+    const innerLoopObj = { 'start': 0, 'con': 6, 'inc': 3 };
+    loopThroughMoves(outerLoopObj, innerLoopObj);
+    // for (let outer = 0; outer <= 2; outer++) {
+    //   playerObj.resetIconCount();
+    //   // playerObj.p2Info.addToCountP2Icon();
+    //   // countP2Icon = 0;
+    //   for (let x = outer; x <= outer + 6; x += 3) {
+    //     checkWinner(x);
+    //   }
+    //   if (winner != '') {
+    //     return
+    //   }
+    // }
+  };
+  function checkDiagonals() {
+    const outerLoopObj1 = { 'start': 0, 'con': 2, 'inc': 2 };
+    const innerLoopObj1 = { 'start': 0, 'con': 8, 'inc': 4 };
+    loopThroughMoves(outerLoopObj1, innerLoopObj1);
+    // for (let outer = 0; outer <= 2; outer += 2) {
+    //   playerObj.resetIconCount();
+    //   // playerObj.p2Info.addToCountP2Icon();
+    //   // countP2Icon = 0;
+    //   for (let x = outer; x <= 8; x += 4) {
+    //     checkWinner(x);
+    //   }
+    //   if (winner != '') {
+    //     return
+    //   }
+    // }
+
+    const outerLoopObj2 = { 'start': 0, 'con': 2, 'inc': 2 };
+    const innerLoopObj2 = { 'start': 2, 'con': 6, 'inc': 2 };
+    loopThroughMoves(outerLoopObj2, innerLoopObj2);
+    // for (let outer = 0; outer <= 2; outer += 2) {
+    //   playerObj.resetIconCount();
+    //   for (let y = 2; y <= 6; y += 2) {
+    //     checkWinner(y);
+    //   }
+    //   if (winner != '') {
+    //     return
+    //   }
+    // }
+  };
+
+  const loopThroughMoves = (oLoop, iLoop) => {
+    for (let outer = oLoop['start']; outer <= oLoop['con']; outer += oLoop['inc']) {
       playerObj.resetIconCount();
-      // playerObj.p2Info.addToCountP2Icon();
-      // countP2Icon = 0;
-      for (let x = outer; x <= outer + 2; ++x) {
+      for (let x = outer + iLoop['start']; x <= outer + iLoop['con']; x += iLoop['inc']) {
         checkWinner(x);
       }
       if (winner != '') {
@@ -283,42 +344,6 @@ const gameObj = (() => {
       }
     }
   }
-
-  function checkColumns() {
-    for (let outer = 0; outer <= 2; outer++) {
-      playerObj.resetIconCount();
-      // playerObj.p2Info.addToCountP2Icon();
-      // countP2Icon = 0;
-      for (let x = outer; x <= outer + 6; x += 3) {
-        checkWinner(x);
-      }
-      if (winner != '') {
-        return
-      }
-    }
-  };
-  function checkDiagonals() {
-    for (let outer = 0; outer <= 2; outer += 2) {
-      playerObj.resetIconCount();
-      // playerObj.p2Info.addToCountP2Icon();
-      // countP2Icon = 0;
-      for (let x = outer; x <= 8; x += 4) {
-        checkWinner(x);
-      }
-      if (winner != '') {
-        return
-      }
-    }
-    for (let outer = 0; outer <= 2; outer += 2) {
-      playerObj.resetIconCount();
-      for (let y = 2; y <= 6; y += 2) {
-        checkWinner(y);
-      }
-      if (winner != '') {
-        return
-      }
-    }
-  };
   const checkWinner = (x) => {
     const p1Name = playerObj.p1Info.getP1Name('p1');
     const p2Name = playerObj.p2Info.getP2Name('p2');
