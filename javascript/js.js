@@ -58,7 +58,7 @@ const listenersSetUp = (() => {
 // 1st setting up necessary module patterns using factory functions inside IIFEs.
 // Module pattern is just functions inside IIFEs. Created them independent of another 
 // class / object instead of creating them inside game class only as opposed to 
-// previous projects because of wwhy not? IIFEs are doing encapsulation. 
+// previous projects because of why not? IIFEs are doing encapsulation. 
 // Right? Also, Remember that modules are something different than module pattern.
 
 // Creating boardObj modulePattern:
@@ -193,7 +193,7 @@ const playerObj = (() => {
     }
     return { currentMove, currentPlayer, nextPlayer, getFirstMove }
   }
-  return { p1Info, p2Info, resetIconCount, getMoveAndPlayers, moveAllowedStatus};
+  return { p1Info, p2Info, resetIconCount, getMoveAndPlayers, moveAllowedStatus };
 })();
 
 // Creating gameObj modulePattern:
@@ -232,15 +232,15 @@ const gameObj = (() => {
       processMoveResult();
       if (winner != '') {
         displayObj.updateOptions('quit-game-p', `${winner} won!`);
-      }else
-      if (winner == '' && boardObj.getBoard().includes('')) {
-        displayObj.updateOptions('player-turn-p', `${nextPlayer} move`);
-      }else
-      if (winner == '' && !(boardObj.getBoard().includes(''))) {
-        displayObj.updateOptions('quit-game-p', `game is draw!`);
-      } else{
-        quitGame();
-      }
+      } else
+        if (winner == '' && boardObj.getBoard().includes('')) {
+          displayObj.updateOptions('player-turn-p', `${nextPlayer} move`);
+        } else
+          if (winner == '' && !(boardObj.getBoard().includes(''))) {
+            displayObj.updateOptions('quit-game-p', `game is draw!`);
+          } else {
+            quitGame();
+          }
     }
     else {
       quitGame();
@@ -252,26 +252,26 @@ const gameObj = (() => {
     // const boardArr = ['X', 'O', 'X', 'O', 'O', 'O', '', '', '']
     // using nested loops to check the winning combinations
     //  for x, y & diagonal axis:
-    
+
     // const rowsWinStatus = checkRows;
     // const columnsWinStatus = checkColumns;
     // const diagonalWinStatus = checkDiagonals;
     const axesArray = [checkRows, checkColumns, checkDiagonals];
     for (const checkAxes of axesArray) {
       checkAxes();
-      if(winner != '') {
+      if (winner != '') {
         return
       }
-    //     return {winnerStatus}
-    //   }
-    // }
-    // return { '' }
+      //     return {winnerStatus}
+      //   }
+      // }
+      // return { '' }
+    }
+
   }
 
-}
-
   function checkRows() {
-    for (let outer = 0; outer <= 8; outer+=3) {
+    for (let outer = 0; outer <= 6; outer += 3) {
       playerObj.resetIconCount();
       // playerObj.p2Info.addToCountP2Icon();
       // countP2Icon = 0;
@@ -285,10 +285,39 @@ const gameObj = (() => {
   }
 
   function checkColumns() {
-
+    for (let outer = 0; outer <= 2; outer++) {
+      playerObj.resetIconCount();
+      // playerObj.p2Info.addToCountP2Icon();
+      // countP2Icon = 0;
+      for (let x = outer; x <= outer + 6; x += 3) {
+        checkWinner(x);
+      }
+      if (winner != '') {
+        return
+      }
+    }
   };
   function checkDiagonals() {
-
+    for (let outer = 0; outer <= 2; outer += 2) {
+      playerObj.resetIconCount();
+      // playerObj.p2Info.addToCountP2Icon();
+      // countP2Icon = 0;
+      for (let x = outer; x <= 8; x += 4) {
+        checkWinner(x);
+      }
+      if (winner != '') {
+        return
+      }
+    }
+    for (let outer = 0; outer <= 2; outer += 2) {
+      playerObj.resetIconCount();
+      for (let y = 2; y <= 6; y += 2) {
+        checkWinner(y);
+      }
+      if (winner != '') {
+        return
+      }
+    }
   };
   const checkWinner = (x) => {
     const p1Name = playerObj.p1Info.getP1Name('p1');
@@ -296,7 +325,7 @@ const gameObj = (() => {
     const p1Icon = playerObj.p1Info.getP1Icon();
     const p2Icon = playerObj.p2Info.getP2Icon();
     // const boardArr = ['X', 'O', 'X', 'O', 'O', 'O', '', '', '']
-    const boardArr  = boardObj.getBoard();
+    const boardArr = boardObj.getBoard();
     if (boardArr[x] == p1Icon) {
       playerObj.p1Info.addToCountP1Icon();
       if (playerObj.p1Info.getCountP1Icon() == 3) {
@@ -307,7 +336,7 @@ const gameObj = (() => {
     else
       if (boardArr[x] == p2Icon) {
         playerObj.p2Info.addToCountP2Icon();
-        if (playerObj.p2Info.getCountP2Icon ()== 3) {
+        if (playerObj.p2Info.getCountP2Icon() == 3) {
           winner = p2Name;
           // return countP2Icon
         }
@@ -317,11 +346,13 @@ const gameObj = (() => {
 
   const quitGame = () => {
     displayObj.updateBoard(boardObj.getBoard());
+    winner = '';
     displayObj.updateOptions('quit-game-p', `${playerObj.getMoveAndPlayers().currentPlayer} quit...`);
   }
   const replayGame = () => {
     boardObj.resetBoard();
     displayObj.updateBoard(boardObj.getBoard());
+    winner = '';
     displayObj.updateOptions('replay-game-p', 'Enter Names');
   }
   return { start, processMove, quitGame, replayGame }
