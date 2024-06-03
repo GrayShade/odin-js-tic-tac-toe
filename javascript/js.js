@@ -148,8 +148,8 @@ const displayObj = (() => {
 
 // Creating playerObj modulePattern:
 const playerObj = (() => {
-  const player1Icon = 'p1';
-  const player2Icon = 'p2';
+  const player1Icon = 'X';
+  const player2Icon = 'O';
   let countP1Icon = 0;
   let countP2Icon = 0;
   const getCountP1Icon = () => countP1Icon;
@@ -177,10 +177,10 @@ const playerObj = (() => {
     p1Move = newP1Move;
     p2Move = newP2Move;
   }
-  const getFirstMove = (p1Icon, p2Icon) => { 
+  const getFirstMove = () => { 
     // Math.floor(Math.random() * (max - min)) + min;
     const randomNumber = (Math.random()>=0.5)? 1 : 0;
-    return [p1Icon, p2Icon][randomNumber];
+    return [player1Icon, player2Icon][randomNumber];
   }
   const getMoveAndPlayers = () => {
     let currentMove;
@@ -218,7 +218,7 @@ const gameObj = (() => {
     // For a new Game, first reset board:
     boardObj.resetBoard();
     displayObj.updateBoard(boardObj.getBoard());
-    let firstMove = playerObj.getFirstMove('p1', 'p2');
+    let firstMove = playerObj.getFirstMove();
     if (firstMove == p1Icon) {
       playerObj.setMovesStatus(true, false);
       displayObj.updateOptions('new-game-p', `${p1Name} move`);
