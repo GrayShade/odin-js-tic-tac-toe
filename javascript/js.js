@@ -82,10 +82,10 @@ let boardObj = (() => {
   // to access that you have to use << displayObj.updateBoard() >>. To
   // access boardObj's << updateBoard >>, gotta use << boardObj.updateBoard() >>.
   // Thus module pattern helps in namespacing too to avoid naming collision. 
-  const updateBoard = (currentMove, ele) => {
+  const updateBoard = (currentMove, e) => {
     const eleArr = document.querySelectorAll('.board-cells');
     for (let i = 0; i < eleArr.length; i++) {
-      if (eleArr[i].id == ele.target.id) {
+      if (eleArr[i].id == e.target.id) {
         boardArr[i] = currentMove;
       }
     }
@@ -142,12 +142,12 @@ const displayObj = (() => {
           }
   }
 
-  const announceResult = (winner = '', resultType) => {
-    if (winner != '') {
-      updateOptions('announcement-p');
+  // const announceResult = (winner = '', resultType) => {
+  //   if (winner != '') {
+  //     updateOptions('announcement-p');
 
-    }
-  }
+  //   }
+  // }
   return { updateBoard, updateOptions }
 })();
 
@@ -236,7 +236,7 @@ const gameObj = (() => {
     }
   }
 
-  const processMove = (ele) => {
+  const processMove = (e) => {
     // const p1Name = playerObj.playerInfo[0].getP1Name('p1');
     // const p2Name = playerObj.p2Info.getP2Name('p2');
     // const p1Icon = playerObj.playerInfo[0].getP1Icon();
@@ -245,16 +245,22 @@ const gameObj = (() => {
       let moveMade = playerObj.getMoveAndPlayers();
       let currentMove = moveMade['currentMove'];
       let nextPlayer = moveMade['nextPlayer'];
-      boardObj.updateBoard(currentMove, ele);
+      // if cell is preoccupied:
+      if (e.target.textContent != '') {
+        return
+      }
+      boardObj.updateBoard(currentMove, e);
       displayObj.updateBoard(boardObj.getBoard());
       processMoveResult();
       if (winner != '') {
+        gameStarted = false;
         displayObj.updateOptions('quit-game-p', `${winner} won!`);
       } else
         if (winner == '' && boardObj.getBoard().includes('')) {
           displayObj.updateOptions('player-turn-p', `${nextPlayer} move`);
         } else
           if (winner == '' && !(boardObj.getBoard().includes(''))) {
+            gameStarted = false;
             displayObj.updateOptions('quit-game-p', `game is draw!`);
           } else {
             quitGame();
