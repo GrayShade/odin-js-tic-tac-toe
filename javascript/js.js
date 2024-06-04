@@ -135,6 +135,11 @@ const displayObj = (() => {
           messageEle.style.display = 'block';
           messageEle.textContent = message;
         }
+        else
+          if (selectedOption == 'message-p') {
+            messageEle.style.display = 'block';
+            messageEle.textContent = message;
+          }
   }
 
   const announceResult = (winner = '', resultType) => {
@@ -177,9 +182,9 @@ const playerObj = (() => {
     p1Move = newP1Move;
     p2Move = newP2Move;
   }
-  const getFirstMove = () => { 
+  const getFirstMove = () => {
     // Math.floor(Math.random() * (max - min)) + min;
-    const randomNumber = (Math.random()>=0.5)? 1 : 0;
+    const randomNumber = (Math.random() >= 0.5) ? 1 : 0;
     return [player1Icon, player2Icon][randomNumber];
   }
   const getMoveAndPlayers = () => {
@@ -208,9 +213,11 @@ const playerObj = (() => {
 // Creating gameObj modulePattern:
 const gameObj = (() => {
   let winner = '';
+  let gameStarted = false;
   // let countP1Icon = 0;
   // let countP2Icon = 0;
   const start = () => {
+    gameStarted = true;
     const p1Name = playerObj.playerInfo[0].getP1Name('p1');
     const p2Name = playerObj.playerInfo[1].getP2Name('p2');
     const p1Icon = playerObj.playerInfo[0].getP1Icon();
@@ -234,7 +241,7 @@ const gameObj = (() => {
     // const p2Name = playerObj.p2Info.getP2Name('p2');
     // const p1Icon = playerObj.playerInfo[0].getP1Icon();
     // const p2Icon = playerObj.p2Info.getP2Icon();
-    if (boardObj.getBoard().includes('')) {
+    if (boardObj.getBoard().includes('') && gameStarted == true) {
       let moveMade = playerObj.getMoveAndPlayers();
       let currentMove = moveMade['currentMove'];
       let nextPlayer = moveMade['nextPlayer'];
@@ -252,6 +259,10 @@ const gameObj = (() => {
           } else {
             quitGame();
           }
+    }
+    // Prevent board manipulation on not started game:
+    else if (gameStarted == false) {
+      displayObj.updateOptions('message-p', 'Game Not Started!');
     }
     else {
       quitGame();
@@ -306,8 +317,10 @@ const gameObj = (() => {
     // }
   };
   function checkDiagonals() {
-    const outerLoopObj1 = { 'start': 0, 'con': 2, 'inc': 2 };
+    const outerLoopObj1 = { 'start': 0, 'con': 1, 'inc': 1 };
     const innerLoopObj1 = { 'start': 0, 'con': 8, 'inc': 4 };
+    // const outerLoopObj1 = { 'start': 0, 'con': 2, 'inc': 2 };
+    // const innerLoopObj1 = { 'start': 0, 'con': 8, 'inc': 4 };
     loopThroughMoves(outerLoopObj1, innerLoopObj1);
     // for (let outer = 0; outer <= 2; outer += 2) {
     //   playerObj.resetIconCount();
@@ -321,7 +334,7 @@ const gameObj = (() => {
     //   }
     // }
 
-    const outerLoopObj2 = { 'start': 0, 'con': 2, 'inc': 2 };
+    const outerLoopObj2 = { 'start': 0, 'con': 1, 'inc': 1 };
     const innerLoopObj2 = { 'start': 2, 'con': 6, 'inc': 2 };
     loopThroughMoves(outerLoopObj2, innerLoopObj2);
     // for (let outer = 0; outer <= 2; outer += 2) {
@@ -336,9 +349,15 @@ const gameObj = (() => {
   };
 
   const loopThroughMoves = (oLoop, iLoop) => {
-    for (let outer = oLoop['start']; outer <= oLoop['con']; outer += oLoop['inc']) {
+    let oStart = oLoop['start'];
+    let oCon = oLoop['con'];
+    let oInc = oLoop['inc'];
+    let iStart = iLoop['start'];
+    let iCon = iLoop['con'];
+    let iInc = iLoop['inc'];
+    for (let outer = oStart; outer <= oCon; outer += oInc) {
       playerObj.resetIconCount();
-      for (let x = outer + iLoop['start']; x <= outer + iLoop['con']; x += iLoop['inc']) {
+      for (let x = outer + iStart; x <= iCon; x += iInc) {
         checkWinner(x);
       }
       if (winner != '') {
@@ -351,8 +370,9 @@ const gameObj = (() => {
     const p2Name = playerObj.playerInfo[1].getP2Name('p2');
     const p1Icon = playerObj.playerInfo[0].getP1Icon();
     const p2Icon = playerObj.playerInfo[1].getP2Icon();
-    // const boardArr = ['X', 'O', 'X', 'O', 'O', 'O', '', '', '']
+    // const boardArr = ['O', 'X', 'O', 'O', 'X', '', 'X', 'O', 'X']
     const boardArr = boardObj.getBoard();
+    displayObj.updateBoard(boardArr);
     if (boardArr[x] == p1Icon) {
       playerObj.playerInfo[0].addToCountP1Icon();
       if (playerObj.playerInfo[0].getCountP1Icon() == 3) {
@@ -372,11 +392,13 @@ const gameObj = (() => {
   }
 
   const quitGame = () => {
+    gameStarted = false;
     displayObj.updateBoard(boardObj.getBoard());
     winner = '';
     displayObj.updateOptions('quit-game-p', `${playerObj.getMoveAndPlayers().currentPlayer} quit...`);
   }
   const replayGame = () => {
+    gameStarted = false
     boardObj.resetBoard();
     displayObj.updateBoard(boardObj.getBoard());
     winner = '';
