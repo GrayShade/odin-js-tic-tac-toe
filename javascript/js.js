@@ -294,8 +294,7 @@ const gameObj = (() => {
   function checkRows() {
     const outerLoopObj = { 'start': 0, 'con': 6, 'inc': 3 };
     const innerLoopObj = { 'start': 0, 'con': 2, 'inc': 1 };
-    const rowsConAdder = 3;
-    loopThroughMoves(outerLoopObj, innerLoopObj, rowsConAdder)
+    loopThroughMoves(outerLoopObj, innerLoopObj, true)
     // for (let outer = 0; outer <= 6; outer += 3) {
     //   playerObj.resetIconCount();
     //   // playerObj.p2Info.addToCountP2Icon();
@@ -357,7 +356,7 @@ const gameObj = (() => {
     // }
   };
 
-  const loopThroughMoves = (oLoop, iLoop, rowsConAdder = 0) => {
+  const loopThroughMoves = (oLoop, iLoop, addToCon = false) => {
     let oStart = oLoop['start'];
     let oCon = oLoop['con'];
     let oInc = oLoop['inc'];
@@ -366,7 +365,12 @@ const gameObj = (() => {
     let iInc = iLoop['inc'];
     for (let outer = oStart; outer <= oCon; outer += oInc) {
       playerObj.resetIconCount();
-      for (let x = outer + iStart; x <= iCon + rowsConAdder; x += iInc) {
+      // For rows, internal loop condition on every iteration needs
+      // to be incremented, so:
+      if (addToCon == true) {
+        addToCon = outer;
+      }
+      for (let x = outer + iStart; x <= iCon + outer; x += iInc) {
         checkWinner(x);
       }
       if (winner != '') {
