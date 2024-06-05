@@ -15,15 +15,17 @@ const listenersSetUp = (() => {
 
     span.addEventListener('click', e => {
       modal.style.display = 'none';
+      displayObj.updateOptions('quit-game-p', 'Names Required');
     });
 
     // for closing modal if clicked anywhere on screen while model is 
     // opened:
-    window.addEventListener('click', e => {
-      if (e.target == modal) {
-        modal.style.display = 'none';
-      }
-    });
+    // window.addEventListener('click', e => {
+    //   if (e.target == modal) {
+    //     modal.style.display = 'none';
+    //     displayObj.updateOptions('quit-game-p', 'Names Required');
+    //   }
+    // });
   })();
 
   // Previously, below listener was in start() in gameObj but it formed a closure to
@@ -292,7 +294,8 @@ const gameObj = (() => {
   function checkRows() {
     const outerLoopObj = { 'start': 0, 'con': 6, 'inc': 3 };
     const innerLoopObj = { 'start': 0, 'con': 2, 'inc': 1 };
-    loopThroughMoves(outerLoopObj, innerLoopObj)
+    const rowsConAdder = 3;
+    loopThroughMoves(outerLoopObj, innerLoopObj, rowsConAdder)
     // for (let outer = 0; outer <= 6; outer += 3) {
     //   playerObj.resetIconCount();
     //   // playerObj.p2Info.addToCountP2Icon();
@@ -354,7 +357,7 @@ const gameObj = (() => {
     // }
   };
 
-  const loopThroughMoves = (oLoop, iLoop) => {
+  const loopThroughMoves = (oLoop, iLoop, rowsConAdder = 0) => {
     let oStart = oLoop['start'];
     let oCon = oLoop['con'];
     let oInc = oLoop['inc'];
@@ -363,7 +366,7 @@ const gameObj = (() => {
     let iInc = iLoop['inc'];
     for (let outer = oStart; outer <= oCon; outer += oInc) {
       playerObj.resetIconCount();
-      for (let x = outer + iStart; x <= iCon; x += iInc) {
+      for (let x = outer + iStart; x <= iCon + rowsConAdder; x += iInc) {
         checkWinner(x);
       }
       if (winner != '') {
@@ -381,6 +384,7 @@ const gameObj = (() => {
     displayObj.updateBoard(boardArr);
     if (boardArr[x] == p1Icon) {
       playerObj.playerInfo[0].addToCountP1Icon();
+      console.log(`plIcon Count: ${playerObj.playerInfo[0].getCountP1Icon()}`);
       if (playerObj.playerInfo[0].getCountP1Icon() == 3) {
         winner = p1Name;
         // return countP1Icon
@@ -389,6 +393,7 @@ const gameObj = (() => {
     else
       if (boardArr[x] == p2Icon) {
         playerObj.playerInfo[1].addToCountP2Icon();
+        console.log(`p2Icon Count: ${playerObj.playerInfo[1].getCountP2Icon()}`);
         if (playerObj.playerInfo[1].getCountP2Icon() == 3) {
           winner = p2Name;
           // return countP2Icon
