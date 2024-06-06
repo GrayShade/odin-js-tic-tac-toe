@@ -40,18 +40,31 @@ const listenersSetUp = (() => {
     });
   });
 
-  submitBtnId.addEventListener('click', e => {
-    // hide card for player names automatically:
+  // submitBtnId.addEventListener('click', e => {
+  //   // hide card for player names automatically:
+  //   const modal = document.getElementById('myModal');
+  //   modal.style.display = 'none';
+  //   gameObj.start();
+  // });
+
+  const form = document.getElementById('form');
+  form.addEventListener(('submit'), e => {
+    // let validationStatus = gameObj.processSubmit(e);
+    // if (validationStatus == true) {
     const modal = document.getElementById('myModal');
     modal.style.display = 'none';
     gameObj.start();
+    // }
   });
+
   quitGameID.addEventListener('click', e => {
     gameObj.quitGame();
   });
   replayGameId.addEventListener('click', e => {
     gameObj.replayGame();
   });
+
+
 
 })();
 // .....................listeners module pattern ending here.......................
@@ -342,7 +355,7 @@ const gameObj = (() => {
     //   }
     // }
 
-    const outerLoopObj2 = { 'start': 0, 'con': 1, 'inc': 1 };
+    const outerLoopObj2 = { 'start': 0, 'con': 0, 'inc': 1 };
     const innerLoopObj2 = { 'start': 2, 'con': 6, 'inc': 2 };
     loopThroughMoves(outerLoopObj2, innerLoopObj2);
     // for (let outer = 0; outer <= 2; outer += 2) {
@@ -421,6 +434,41 @@ const gameObj = (() => {
   }
   return { start, processMove, quitGame, replayGame }
 })();
+
+// const validationObj = ({
+  
+    // remember that 'submit' event works only for form, not for buttons:
+
+    // const inputs = document.querySelectorAll('.form-inputs');
+    // for (let input of inputs) {
+    //   input.addEventListener(('input'), e => {
+    //     const ele_name = e.target.name;
+    //     const ele_message = `${ele_name}-message`;
+    //     this.validationObj.validateBeforeSubmit(e, ele_name, ele_message);
+    //   });
+    // }
+
+    // form.addEventListener(('submit'), e => {
+    //   const req_inputs = document.querySelectorAll('input.required');
+    //   const req_msg_spans = document.querySelectorAll('span.required');
+    //   let req_fields_status = false;
+    //   let optional_fields_status = false;
+    //   for (let i = 0; i < req_inputs.length; i++) {
+    //     req_fields_status = this.validationObj.validateRequiredAfterSubmit(req_inputs[i], req_msg_spans[i], this.myLibrary);
+    //   }
+    //   const optional_inputs = document.querySelectorAll('input.optional');
+    //   const optional_spans = document.querySelectorAll('span.optional');
+    //   for (let i = 0; i < optional_inputs.length; i++) {
+    //     optional_fields_status = this.validationObj.validateOptionalAfterSubmit(optional_inputs[i], optional_spans[i]);
+    //     if (optional_fields_status == false) {
+    //       break;
+    //     }
+    //   }
+    //   if (req_fields_status == true && optional_fields_status == true) {
+    //     this.#processModal(e);
+    //   }
+    // });
+// })();
 
 
 
