@@ -3,6 +3,7 @@ const listenersSetUp = (() => {
   const newGameId = document.getElementById('new-game-p');
   const quitGameID = document.getElementById('quit-game-p');
   const replayGameId = document.getElementById('replay-game-p');
+  const form = document.getElementById('form');
   const submitBtnId = document.getElementById('form-button');
 
   const setModel = (() => {
@@ -47,16 +48,36 @@ const listenersSetUp = (() => {
   //   gameObj.start();
   // });
 
-  const form = document.getElementById('form');
-  form.addEventListener(('submit'), e => {
-    // let validationStatus = gameObj.processSubmit(e);
-    // if (validationStatus == true) {
-    const modal = document.getElementById('myModal');
-    modal.style.display = 'none';
-    gameObj.start();
-    // }
+  // const form = document.getElementById('form');
+  // form.addEventListener(('submit'), e => {
+  //   let validationStatus = gameObj.processSubmit(e);
+  //   if (validationStatus == true) {
+  //   const modal = document.getElementById('myModal');
+  //   modal.style.display = 'none';
+  //   gameObj.start();
+  //   }
+  // });
+
+  submitBtnId.addEventListener(('click'), e => {
+    // remember that 'submit' event works only for form, not for buttons.
+
+    let req_fields_status = false;
+    req_fields_status = gameObj.processSubmit(e);
+
+    if (req_fields_status == true) {
+      const modal = document.getElementById('myModal');
+      modal.style.display = 'none';
+      gameObj.start();
+    }
   });
 
+  const req_inputs = document.querySelectorAll('input');
+  for (let i = 0; i < req_inputs.length; i++) {
+    const input = req_inputs[i];
+    input.addEventListener('keyup', (e) => {
+      gameObj.validatedFocInBefSubmit(e);
+    });
+  }
   quitGameID.addEventListener('click', e => {
     gameObj.quitGame();
   });
@@ -231,6 +252,17 @@ const gameObj = (() => {
   let gameStarted = false;
   // let countP1Icon = 0;
   // let countP2Icon = 0;
+  const validatedFocInBefSubmit = (e) => validationObj.valFocInBefSubmit(e);
+  const processSubmit = (e) => {
+    const req_inputs = document.querySelectorAll('input.required');
+    const req_msg_spans = document.querySelectorAll('span.required')
+    let req_fields_status;
+    // for (let i = 0; i < req_inputs.length; i++) {
+    
+    afterSubmitStatus = validationObj.validateReqAfterSubmit(req_inputs, req_msg_spans);
+    // }
+    return afterSubmitStatus;
+  }
   const start = () => {
     gameStarted = true;
     const p1Name = playerObj.playerInfo[0].getP1Name('p1');
@@ -432,43 +464,97 @@ const gameObj = (() => {
     winner = '';
     displayObj.updateOptions('replay-game-p', 'Enter Names');
   }
-  return { start, processMove, quitGame, replayGame }
+  return { processSubmit, start, processMove, quitGame, replayGame, validatedFocInBefSubmit }
 })();
 
-// const validationObj = ({
+const validationObj = (() => {
+
+  const valFocInBefSubmit = (e) => {
+    // const validityArr = [];
+      const input = e.target;
+      // if form was submitted before, then setCustomValidity has some
+      // value already which will cause error message to be shown again 
+      // & again even or correct input. So,:
+      input.setCustomValidity("");
+      const validityState = input.validity;
+      if (validityState.valid == true) {
+        input.setCustomValidity("");
+        input.style.borderColor = '#E5E7EB'
+        input.reportValidity();
+      }
+      else {
+        input.style.borderColor = 'red'
+        input.setCustomValidity("Only single word, no space, 1 to 12 letters allowed!");
+        input.reportValidity();
+      }
+  }
+
+  const validateReqAfterSubmit = (req_inputs, msg_span) => {
+    const validityArr = [];
+    for (let i = 0; i < req_inputs.length; i++) {
+      const input = req_inputs[i];
+      const validityState = input.validity;
+      if (validityState.valueMissing) {
+        input.setCustomValidity("Input can't be empty!");
+      } else if (validityState.rangeUnderflow) {
+        input.setCustomValidity("Letters can't be less than 1!");
+      } else if (validityState.rangeOverflow) {
+        input.setCustomValidity("Letters can't be more than 12!");
+      } else if (validityState.patternMismatch) {
+        input.setCustomValidity("Only single word, no space, 1 to 12 letters allowed!");
+      }
+      // this default else is a must:
+      else {
+        input.setCustomValidity("");
+      }
+      validityArr.push(input.reportValidity());
+      // req_fields_status = validationObj.validateReqAfterSubmit(req_inputs[i], req_msg_spans[i]);
+    }
+
+    if (validityArr.includes(false)) {
+      return false;
+    }
   
-    // remember that 'submit' event works only for form, not for buttons:
+    return true;
 
-    // const inputs = document.querySelectorAll('.form-inputs');
-    // for (let input of inputs) {
-    //   input.addEventListener(('input'), e => {
-    //     const ele_name = e.target.name;
-    //     const ele_message = `${ele_name}-message`;
-    //     this.validationObj.validateBeforeSubmit(e, ele_name, ele_message);
-    //   });
-    // }
+  }
 
-    // form.addEventListener(('submit'), e => {
-    //   const req_inputs = document.querySelectorAll('input.required');
-    //   const req_msg_spans = document.querySelectorAll('span.required');
-    //   let req_fields_status = false;
-    //   let optional_fields_status = false;
-    //   for (let i = 0; i < req_inputs.length; i++) {
-    //     req_fields_status = this.validationObj.validateRequiredAfterSubmit(req_inputs[i], req_msg_spans[i], this.myLibrary);
-    //   }
-    //   const optional_inputs = document.querySelectorAll('input.optional');
-    //   const optional_spans = document.querySelectorAll('span.optional');
-    //   for (let i = 0; i < optional_inputs.length; i++) {
-    //     optional_fields_status = this.validationObj.validateOptionalAfterSubmit(optional_inputs[i], optional_spans[i]);
-    //     if (optional_fields_status == false) {
-    //       break;
-    //     }
-    //   }
-    //   if (req_fields_status == true && optional_fields_status == true) {
-    //     this.#processModal(e);
-    //   }
-    // });
-// })();
+
+
+
+  // remember that 'submit' event works only for form, not for buttons:
+
+  // const inputs = document.querySelectorAll('.form-inputs');
+  // for (let input of inputs) {
+  //   input.addEventListener(('input'), e => {
+  //     const ele_name = e.target.name;
+  //     const ele_message = `${ele_name}-message`;
+  //     this.validationObj.validateBefSubmit(e, ele_name, ele_message);
+  //   });
+  // }
+
+  // form.addEventListener(('submit'), e => {
+  //   const req_inputs = document.querySelectorAll('input.required');
+  //   const req_msg_spans = document.querySelectorAll('span.required');
+  //   let req_fields_status = false;
+  //   let optional_fields_status = false;
+  //   for (let i = 0; i < req_inputs.length; i++) {
+  //     req_fields_status = this.validationObj.validateRequiredAfterSubmit(req_inputs[i], req_msg_spans[i], this.myLibrary);
+  //   }
+  //   const optional_inputs = document.querySelectorAll('input.optional');
+  //   const optional_spans = document.querySelectorAll('span.optional');
+  //   for (let i = 0; i < optional_inputs.length; i++) {
+  //     optional_fields_status = this.validationObj.validateOptionalAfterSubmit(optional_inputs[i], optional_spans[i]);
+  //     if (optional_fields_status == false) {
+  //       break;
+  //     }
+  //   }
+  //   if (req_fields_status == true && optional_fields_status == true) {
+  //     this.#processModal(e);
+  //   }
+  // });
+  return { validateReqAfterSubmit, valFocInBefSubmit }
+})();
 
 
 

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
   <script type="text/javascript" src="./javascript/js.js" defer></script>
   <title>Document</title>
 </head>
+
 <body>
   <div id="header">
     <h1>TIC-TAC-TOE</h1>
@@ -30,7 +32,7 @@
       <p id="player-turn-p" class="game-options-p"></p>
       <p id="quit-game-p" class="game-options-p">QUIT GAME</p>
       <p id="replay-game-p" class="game-options-p">REPLAY?</p>
-      
+
     </div>
     <!-- .....................modal related code:........................ -->
     <div id="myModal" class="modal">
@@ -38,24 +40,24 @@
         <div id="modal-content-form">
           <form action="#" id="form" onsubmit="event.preventDefault();">
             <div class="form-input-div">
-              <div class="label-and-tooltip-pair-div">
-                <label for="p1" class="heading">Player 1 Name:</label>
-                <span class="tooltip"
+              <!-- <div class="label-and-tooltip-pair-div"> -->
+              <label for="p1" class="heading">Player 1 Name:</label>
+              <!-- <span class="tooltip"
                   data-tooltip="Minimum 1 & maximum 79 characters, no space at start/end & only single space between words">?</span>
-              </div>
-              <input type="text" class="optional form-inputs" id="p1" name="author" minlength="1" maxlength="79"
-                pattern="^[\w\S]+( [\w\S]+)*$">
-              <span class="optional message" id="author-message"></span>
+              </div> -->
+              <input type="text" class="required form-inputs" id="p1" name="p1" minlength="1" maxlength="12"
+                pattern="^[\d\w]{0,12}$" placeholder="" required>
+              <!-- <span class="required message" id="p1-message"></span> -->
             </div>
             <div class="form-input-div">
-              <div class="label-and-tooltip-pair-div">
-                <label for="p2" class="heading">Player 2 Name:</label>
-                <span class="tooltip"
+              <!-- <div class="label-and-tooltip-pair-div"> -->
+              <label for="p2" class="heading">Player 2 Name:</label>
+              <!-- <span class="tooltip"
                   data-tooltip="Minimum 1 & maximum 79 characters, no space at start/end & only single space between words">?</span>
-              </div>
-              <input type="text" class="optional form-inputs" id="p2" name="author" minlength="1" maxlength="79"
-                pattern="^[\w\S]+( [\w\S]+)*$">
-              <span class="optional message" id="author-message"></span>
+              </div> -->
+              <input type="text" class="required form-inputs" id="p2" name="p2" minlength="1" maxlength="12"
+                pattern="^[\d\w]{0,12}$" placeholder="" required>
+              <!-- <span class="required message" id="p2-message"></span> -->
             </div>
           </form>
           <button id="form-button" form="form" type="submit">Start Game</button>
@@ -67,4 +69,5 @@
   </div>
   <div id="footer"></div>
 </body>
+
 </html>
