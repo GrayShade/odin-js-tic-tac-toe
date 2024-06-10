@@ -45,7 +45,6 @@ const listenersSetUp = (() => {
     }
   });
 
-
   for (let i = 0; i < req_inputs.length; i++) {
     const input = req_inputs[i];
     input.addEventListener('keyup', (e) => {
@@ -112,7 +111,6 @@ const displayObj = (() => {
         boardNodeList[i].style.color = '#ff8c00'; 
       }
       else {
-        // 
         boardNodeList[i].removeAttribute("style");
       }
     }
@@ -314,7 +312,6 @@ const gameObj = (() => {
     loopThroughMoves(outerLoopObj, innerLoopObj, true)
 
   }
-
   function checkColumns() {
     const outerLoopObj = { 'start': 0, 'con': 2, 'inc': 1 };
     const innerLoopObj = { 'start': 0, 'con': 6, 'inc': 3 };
@@ -393,6 +390,7 @@ const gameObj = (() => {
   return { processSubmit, start, processMove, quitGame, replayGame, validatedKeyUpBefSubmit }
 })();
 
+// Creating validation module pattern:
 const validationObj = (() => {
 
   const valKeyUpBefSubmit = (e) => {
