@@ -58,6 +58,12 @@ const listenersSetUp = (() => {
     gameObj.replayGame();
   });
 
+  const popup = document.querySelector('.popup');
+  popup.addEventListener('click', () => {
+    var myPopup = document.getElementById("myPopup");
+    myPopup.classList.toggle("show");
+  });
+
 })();
 // .....................listeners module pattern ending here.......................
 
@@ -108,7 +114,7 @@ const displayObj = (() => {
     for (let i = 0; i < boardNodeList.length; i++) {
       boardNodeList[i].textContent = boardArr[i];
       if (boardArr[i] == 'X') {
-        boardNodeList[i].style.color = '#ff8c00'; 
+        boardNodeList[i].style.color = '#ff8c00';
       }
       else {
         boardNodeList[i].removeAttribute("style");
