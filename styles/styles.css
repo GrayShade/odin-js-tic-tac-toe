@@ -23,6 +23,14 @@ select {
   height: 100vh;
 }
 
+#header, #main {
+  font-family: EraserRegular;
+}
+
+#header, #main, #footer {
+  width: 100%;
+}
+
 body {
   height: 100vh;
   display: flex;
@@ -36,7 +44,6 @@ body {
   background-repeat: no-repeat;
   background-position: center center;
   background-attachment: fixed;
-  font-family: EraserRegular;
   justify-content: space-between;
   align-items: center;
 }
@@ -261,4 +268,10 @@ input:placeholder-shown {
   height: 5%;
   display: flex;
   align-items: center;
+  color: #a9a9a9;
+  justify-content: flex-end;
+}
+
+#footer a {
+  color: #a9a9a9;
 }
