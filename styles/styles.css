@@ -4,11 +4,6 @@
   src: url(./../fonts/EraserRegular.ttf);
 }
 
-/* @font-face {
-  font-family: EraserDust;
-  src: url(./../fonts/EraserDust.ttf);
-} */
-
 * {
   margin: 0;
   border: none;
@@ -39,16 +34,13 @@ body {
   background-repeat: no-repeat;
   background-position: center center;
   font-family: EraserRegular;
-  /* font-family: EraserDust; */
 }
 
 #header {
   height: 15%;
-  /* border: 1px solid white; */
   display: flex;
   font-size: 1.7em;
-  /* font-weight: 900; */
-  color: white;
+  color: #ebebeb;
   justify-content: center;
   align-items: center;
 }
@@ -58,8 +50,7 @@ body {
   flex-direction: column;
   align-items: center;
   height: 80%;
-  /* border: 1px solid white; */
-  justify-content: space-between;
+  justify-content: flex-start;
 }
 
 #board {
@@ -68,24 +59,23 @@ body {
   padding: 2% 0% 3%;
 }
 
-.board-cells, 
-#board-cell-2, 
+.board-cells,
+#board-cell-2,
 #board-cell-4,
 #board-cell-5,
 #board-cell-6,
-#board-cell-8
-   {
-    border: 5px white;
-    border-radius: 5px;
-    color: white;
-    font-size: 5em;
-    text-align: center;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+#board-cell-8 {
+  border: 5px white;
+  border-radius: 5px;
+  color: #ebebeb;
+  font-size: 5em;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-#board-cell-2, 
+#board-cell-2,
 #board-cell-8 {
   border-style: none solid;
 }
@@ -98,7 +88,6 @@ body {
 #board-cell-5 {
   border: 5px solid white;
   border-radius: 5px;
-  /* border-style: none solid; */
 }
 
 #game-options {
@@ -107,16 +96,20 @@ body {
 }
 
 .game-options-p {
-  color: white;
+  color: #ebebeb;
   padding: 5px 0px;
 }
 
-#quit-game-p, #replay-game-p, #player-turn-p {
-  /* visibility: hidden; */
+#quit-game-p,
+#replay-game-p,
+#player-turn-p {
   display: none;
 }
 
-#new-game-p, #replay-game-p, #quit-game-p {
+#new-game-p,
+#replay-game-p,
+#quit-game-p,
+.board-cells {
   cursor: pointer;
 }
 
@@ -134,14 +127,6 @@ body {
   background: darkorange;
   color: whitesmoke;
 }
-
-/* #myModal #form input,
-#myModal #form select {
-  padding: 5px;
-  width: 220px;
-  border-radius: 5px;
-  border: 1px solid #E5E7EB;
-} */
 
 .message {
   font-size: 12px;
@@ -210,10 +195,6 @@ body {
   letter-spacing: 0.03em;
 }
 
-/* input {
-  border-color: #E5E7EB;
-} */
-
 input:focus {
   outline: none;
   box-shadow: 0 3px 6px 0 lightgray;
@@ -224,14 +205,11 @@ input:invalid {
 }
 
 input:valid {
-  /* padding: 5px;
-  width: 220px;
-  border-radius: 5px; */
   border-color: #E5E7EB;
 }
 
- input,
- select {
+input,
+select {
   padding: 5px;
   width: 220px;
   border-radius: 5px;
@@ -276,5 +254,4 @@ input:placeholder-shown {
 
 #footer {
   height: 5%;
-  /* border: 1px solid white; */
 }

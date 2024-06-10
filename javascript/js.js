@@ -3,8 +3,8 @@ const listenersSetUp = (() => {
   const newGameId = document.getElementById('new-game-p');
   const quitGameID = document.getElementById('quit-game-p');
   const replayGameId = document.getElementById('replay-game-p');
-  const form = document.getElementById('form');
   const submitBtnId = document.getElementById('form-button');
+  const req_inputs = document.querySelectorAll('input');
 
   const setModel = (() => {
     const modal = document.getElementById('myModal');
@@ -18,15 +18,6 @@ const listenersSetUp = (() => {
       modal.style.display = 'none';
       displayObj.updateOptions('quit-game-p', 'Names Required');
     });
-
-    // for closing modal if clicked anywhere on screen while model is 
-    // opened:
-    // window.addEventListener('click', e => {
-    //   if (e.target == modal) {
-    //     modal.style.display = 'none';
-    //     displayObj.updateOptions('quit-game-p', 'Names Required');
-    //   }
-    // });
   })();
 
   // Previously, below listener was in start() in gameObj but it formed a closure to
@@ -41,23 +32,6 @@ const listenersSetUp = (() => {
     });
   });
 
-  // submitBtnId.addEventListener('click', e => {
-  //   // hide card for player names automatically:
-  //   const modal = document.getElementById('myModal');
-  //   modal.style.display = 'none';
-  //   gameObj.start();
-  // });
-
-  // const form = document.getElementById('form');
-  // form.addEventListener(('submit'), e => {
-  //   let validationStatus = gameObj.processSubmit(e);
-  //   if (validationStatus == true) {
-  //   const modal = document.getElementById('myModal');
-  //   modal.style.display = 'none';
-  //   gameObj.start();
-  //   }
-  // });
-
   submitBtnId.addEventListener(('click'), e => {
     // remember that 'submit' event works only for form, not for buttons.
 
@@ -71,11 +45,11 @@ const listenersSetUp = (() => {
     }
   });
 
-  const req_inputs = document.querySelectorAll('input');
+
   for (let i = 0; i < req_inputs.length; i++) {
     const input = req_inputs[i];
     input.addEventListener('keyup', (e) => {
-      gameObj.validatedFocInBefSubmit(e);
+      gameObj.validatedKeyUpBefSubmit(e);
     });
   }
   quitGameID.addEventListener('click', e => {
@@ -84,8 +58,6 @@ const listenersSetUp = (() => {
   replayGameId.addEventListener('click', e => {
     gameObj.replayGame();
   });
-
-
 
 })();
 // .....................listeners module pattern ending here.......................
@@ -131,22 +103,34 @@ let boardObj = (() => {
 
 // Creating displayObj modulePattern:
 const displayObj = (() => {
+
   const updateBoard = (boardArr) => {
     const boardNodeList = document.querySelectorAll('.board-cells');
     for (let i = 0; i < boardNodeList.length; i++) {
       boardNodeList[i].textContent = boardArr[i];
+      if (boardArr[i] == 'X') {
+        boardNodeList[i].style.color = '#ff8c00'; 
+      }
+      else {
+        // 
+        boardNodeList[i].removeAttribute("style");
+      }
     }
   }
-  const updateOptions = (selectedOption = '', message = '') => {
+  const updateOptions = (selectedOption = '', message = '', playerIcon) => {
     const newOptionEle = document.getElementById('new-game-p');
     const quitOptionEle = document.getElementById('quit-game-p');
     const replayOptionEle = document.getElementById('replay-game-p');
     const turnOptionEle = document.getElementById('player-turn-p');
     const messageEle = document.getElementById('message-p');
+    messageEle.style.color = '#ebebeb';
     if (selectedOption == 'new-game-p' || selectedOption == 'player-turn-p') {
       newOptionEle.style.display = 'none';
       messageEle.style.display = 'block';
       messageEle.textContent = message;
+      if (playerIcon == 'X') {
+        messageEle.style.color = '#ff8c00';
+      }
       quitOptionEle.style.display = 'block';
       replayOptionEle.style.display = 'none';
     }
@@ -178,12 +162,6 @@ const displayObj = (() => {
           }
   }
 
-  // const announceResult = (winner = '', resultType) => {
-  //   if (winner != '') {
-  //     updateOptions('announcement-p');
-
-  //   }
-  // }
   return { updateBoard, updateOptions }
 })();
 
@@ -213,13 +191,11 @@ const playerObj = (() => {
 
   let p1Move = false;
   let p2Move = false;
-  // let moveAllowedStatus = { p1Move, p2Move };
   const setMovesStatus = (newP1Move, newP2Move) => {
     p1Move = newP1Move;
     p2Move = newP2Move;
   }
   const getFirstMove = () => {
-    // Math.floor(Math.random() * (max - min)) + min;
     const randomNumber = (Math.random() >= 0.5) ? 1 : 0;
     return [player1Icon, player2Icon][randomNumber];
   }
@@ -227,10 +203,14 @@ const playerObj = (() => {
     let currentMove;
     let currentPlayer;
     let nextPlayer;
+    let currentPlayerIcon;
+    let nextPlayerIcon;
     if (p1Move) {
       currentMove = player1Icon;
       currentPlayer = getP1Name();
       nextPlayer = getP2Name();
+      currentPlayerIcon = getP1Icon();
+      nextPlayerIcon = getP2Icon();
       p1Move = false;
       p2Move = true;
     }
@@ -238,10 +218,12 @@ const playerObj = (() => {
       currentMove = player2Icon;
       currentPlayer = getP2Name();
       nextPlayer = getP1Name();
+      currentPlayerIcon = getP2Icon();
+      nextPlayerIcon = getP1Icon();
       p2Move = false;
       p1Move = true;
     }
-    return { currentMove, currentPlayer, nextPlayer }
+    return { currentMove, currentPlayer, nextPlayer, currentPlayerIcon, nextPlayerIcon }
   }
   return { playerInfo, resetIconCount, getMoveAndPlayers, setMovesStatus, getFirstMove };
 })();
@@ -250,17 +232,10 @@ const playerObj = (() => {
 const gameObj = (() => {
   let winner = '';
   let gameStarted = false;
-  // let countP1Icon = 0;
-  // let countP2Icon = 0;
-  const validatedFocInBefSubmit = (e) => validationObj.valFocInBefSubmit(e);
+  const validatedKeyUpBefSubmit = (e) => validationObj.valKeyUpBefSubmit(e);
   const processSubmit = (e) => {
     const req_inputs = document.querySelectorAll('input.required');
-    const req_msg_spans = document.querySelectorAll('span.required')
-    let req_fields_status;
-    // for (let i = 0; i < req_inputs.length; i++) {
-    
-    afterSubmitStatus = validationObj.validateReqAfterSubmit(req_inputs, req_msg_spans);
-    // }
+    const afterSubmitStatus = validationObj.validateReqAfterSubmit(req_inputs);
     return afterSubmitStatus;
   }
   const start = () => {
@@ -268,30 +243,28 @@ const gameObj = (() => {
     const p1Name = playerObj.playerInfo[0].getP1Name('p1');
     const p2Name = playerObj.playerInfo[1].getP2Name('p2');
     const p1Icon = playerObj.playerInfo[0].getP1Icon();
-    // const p2Icon = playerObj.p2Info.getP2Icon();
+    const p2Icon = playerObj.playerInfo[1].getP2Icon();
     // For a new Game, first reset board:
     boardObj.resetBoard();
     displayObj.updateBoard(boardObj.getBoard());
     let firstMove = playerObj.getFirstMove();
     if (firstMove == p1Icon) {
       playerObj.setMovesStatus(true, false);
-      displayObj.updateOptions('new-game-p', `${p1Name} move`);
+      displayObj.updateOptions('new-game-p', `${p1Name} move`, p1Icon);
     }
     else {
       playerObj.setMovesStatus(false, true);
-      displayObj.updateOptions('new-game-p', `${p2Name} move`);
+      displayObj.updateOptions('new-game-p', `${p2Name} move`, p2Icon);
     }
   }
 
   const processMove = (e) => {
-    // const p1Name = playerObj.playerInfo[0].getP1Name('p1');
-    // const p2Name = playerObj.p2Info.getP2Name('p2');
-    // const p1Icon = playerObj.playerInfo[0].getP1Icon();
-    // const p2Icon = playerObj.p2Info.getP2Icon();
     if (boardObj.getBoard().includes('') && gameStarted == true) {
       let moveMade = playerObj.getMoveAndPlayers();
       let currentMove = moveMade['currentMove'];
       let nextPlayer = moveMade['nextPlayer'];
+      let currentPlayerIcon = moveMade['currentPlayerIcon'];
+      let nextPlayerIcon = moveMade['nextPlayerIcon'];
       // if cell is preoccupied:
       if (e.target.textContent != '') {
         return
@@ -304,7 +277,7 @@ const gameObj = (() => {
         displayObj.updateOptions('quit-game-p', `${winner} won!`);
       } else
         if (winner == '' && boardObj.getBoard().includes('')) {
-          displayObj.updateOptions('player-turn-p', `${nextPlayer} move`);
+          displayObj.updateOptions('player-turn-p', `${nextPlayer} move`, nextPlayerIcon);
         } else
           if (winner == '' && !(boardObj.getBoard().includes(''))) {
             gameStarted = false;
@@ -325,7 +298,6 @@ const gameObj = (() => {
   const processMoveResult = () => {
     // using nested loops to check the winning combinations
     //  for rows, columns & diagonal axes:
-
     const axesArray = [checkRows, checkColumns, checkDiagonals];
     for (const checkAxes of axesArray) {
       checkAxes();
@@ -340,65 +312,23 @@ const gameObj = (() => {
     const outerLoopObj = { 'start': 0, 'con': 6, 'inc': 3 };
     const innerLoopObj = { 'start': 0, 'con': 2, 'inc': 1 };
     loopThroughMoves(outerLoopObj, innerLoopObj, true)
-    // for (let outer = 0; outer <= 6; outer += 3) {
-    //   playerObj.resetIconCount();
-    //   // playerObj.p2Info.addToCountP2Icon();
-    //   // countP2Icon = 0;
-    //   for (let x = outer; x <= outer + 2; ++x) {
-    //     checkWinner(x);
-    //   }
-    //   if (winner != '') {
-    //     return
-    //   }
-    // }
+
   }
 
   function checkColumns() {
     const outerLoopObj = { 'start': 0, 'con': 2, 'inc': 1 };
     const innerLoopObj = { 'start': 0, 'con': 6, 'inc': 3 };
     loopThroughMoves(outerLoopObj, innerLoopObj);
-    // for (let outer = 0; outer <= 2; outer++) {
-    //   playerObj.resetIconCount();
-    //   // playerObj.p2Info.addToCountP2Icon();
-    //   // countP2Icon = 0;
-    //   for (let x = outer; x <= outer + 6; x += 3) {
-    //     checkWinner(x);
-    //   }
-    //   if (winner != '') {
-    //     return
-    //   }
-    // }
+
   };
   function checkDiagonals() {
     const outerLoopObj1 = { 'start': 0, 'con': 1, 'inc': 1 };
     const innerLoopObj1 = { 'start': 0, 'con': 8, 'inc': 4 };
-    // const outerLoopObj1 = { 'start': 0, 'con': 2, 'inc': 2 };
-    // const innerLoopObj1 = { 'start': 0, 'con': 8, 'inc': 4 };
     loopThroughMoves(outerLoopObj1, innerLoopObj1);
-    // for (let outer = 0; outer <= 2; outer += 2) {
-    //   playerObj.resetIconCount();
-    //   // playerObj.p2Info.addToCountP2Icon();
-    //   // countP2Icon = 0;
-    //   for (let x = outer; x <= 8; x += 4) {
-    //     checkWinner(x);
-    //   }
-    //   if (winner != '') {
-    //     return
-    //   }
-    // }
 
     const outerLoopObj2 = { 'start': 0, 'con': 0, 'inc': 1 };
     const innerLoopObj2 = { 'start': 2, 'con': 6, 'inc': 2 };
     loopThroughMoves(outerLoopObj2, innerLoopObj2);
-    // for (let outer = 0; outer <= 2; outer += 2) {
-    //   playerObj.resetIconCount();
-    //   for (let y = 2; y <= 6; y += 2) {
-    //     checkWinner(y);
-    //   }
-    //   if (winner != '') {
-    //     return
-    //   }
-    // }
   };
 
   const loopThroughMoves = (oLoop, iLoop, addToCon = false) => {
@@ -428,15 +358,13 @@ const gameObj = (() => {
     const p2Name = playerObj.playerInfo[1].getP2Name('p2');
     const p1Icon = playerObj.playerInfo[0].getP1Icon();
     const p2Icon = playerObj.playerInfo[1].getP2Icon();
-    // const boardArr = ['O', 'X', 'O', 'O', 'X', '', 'X', 'O', 'X']
     const boardArr = boardObj.getBoard();
-    displayObj.updateBoard(boardArr);
+    // displayObj.updateBoard(boardArr);
     if (boardArr[x] == p1Icon) {
       playerObj.playerInfo[0].addToCountP1Icon();
       console.log(`plIcon Count: ${playerObj.playerInfo[0].getCountP1Icon()}`);
       if (playerObj.playerInfo[0].getCountP1Icon() == 3) {
         winner = p1Name;
-        // return countP1Icon
       }
     }
     else
@@ -445,10 +373,8 @@ const gameObj = (() => {
         console.log(`p2Icon Count: ${playerObj.playerInfo[1].getCountP2Icon()}`);
         if (playerObj.playerInfo[1].getCountP2Icon() == 3) {
           winner = p2Name;
-          // return countP2Icon
         }
       }
-    // return {winner}
   }
 
   const quitGame = () => {
@@ -464,32 +390,34 @@ const gameObj = (() => {
     winner = '';
     displayObj.updateOptions('replay-game-p', 'Enter Names');
   }
-  return { processSubmit, start, processMove, quitGame, replayGame, validatedFocInBefSubmit }
+  return { processSubmit, start, processMove, quitGame, replayGame, validatedKeyUpBefSubmit }
 })();
 
 const validationObj = (() => {
 
-  const valFocInBefSubmit = (e) => {
-    // const validityArr = [];
-      const input = e.target;
-      // if form was submitted before, then setCustomValidity has some
-      // value already which will cause error message to be shown again 
-      // & again even or correct input. So,:
+  const valKeyUpBefSubmit = (e) => {
+    if (e.key === 'Tab') {
+      return;
+    }
+    const input = e.target;
+    // if form was submitted before, then setCustomValidity has some
+    // value already which will cause error message to be shown again 
+    // & again even or correct input. So,:
+    input.setCustomValidity("");
+    const validityState = input.validity;
+    if (validityState.valid == true) {
       input.setCustomValidity("");
-      const validityState = input.validity;
-      if (validityState.valid == true) {
-        input.setCustomValidity("");
-        input.style.borderColor = '#E5E7EB'
-        input.reportValidity();
-      }
-      else {
-        input.style.borderColor = 'red'
-        input.setCustomValidity("Only single word, no space, 1 to 12 letters allowed!");
-        input.reportValidity();
-      }
+      input.style.borderColor = '#E5E7EB'
+      input.reportValidity();
+    }
+    else {
+      input.style.borderColor = 'red'
+      input.setCustomValidity("Only single word, no space, 1 to 12 letters allowed!");
+      input.reportValidity();
+    }
   }
 
-  const validateReqAfterSubmit = (req_inputs, msg_span) => {
+  const validateReqAfterSubmit = (req_inputs) => {
     const validityArr = [];
     for (let i = 0; i < req_inputs.length; i++) {
       const input = req_inputs[i];
@@ -508,52 +436,16 @@ const validationObj = (() => {
         input.setCustomValidity("");
       }
       validityArr.push(input.reportValidity());
-      // req_fields_status = validationObj.validateReqAfterSubmit(req_inputs[i], req_msg_spans[i]);
     }
 
     if (validityArr.includes(false)) {
       return false;
     }
-  
+
     return true;
 
   }
-
-
-
-
-  // remember that 'submit' event works only for form, not for buttons:
-
-  // const inputs = document.querySelectorAll('.form-inputs');
-  // for (let input of inputs) {
-  //   input.addEventListener(('input'), e => {
-  //     const ele_name = e.target.name;
-  //     const ele_message = `${ele_name}-message`;
-  //     this.validationObj.validateBefSubmit(e, ele_name, ele_message);
-  //   });
-  // }
-
-  // form.addEventListener(('submit'), e => {
-  //   const req_inputs = document.querySelectorAll('input.required');
-  //   const req_msg_spans = document.querySelectorAll('span.required');
-  //   let req_fields_status = false;
-  //   let optional_fields_status = false;
-  //   for (let i = 0; i < req_inputs.length; i++) {
-  //     req_fields_status = this.validationObj.validateRequiredAfterSubmit(req_inputs[i], req_msg_spans[i], this.myLibrary);
-  //   }
-  //   const optional_inputs = document.querySelectorAll('input.optional');
-  //   const optional_spans = document.querySelectorAll('span.optional');
-  //   for (let i = 0; i < optional_inputs.length; i++) {
-  //     optional_fields_status = this.validationObj.validateOptionalAfterSubmit(optional_inputs[i], optional_spans[i]);
-  //     if (optional_fields_status == false) {
-  //       break;
-  //     }
-  //   }
-  //   if (req_fields_status == true && optional_fields_status == true) {
-  //     this.#processModal(e);
-  //   }
-  // });
-  return { validateReqAfterSubmit, valFocInBefSubmit }
+  return { validateReqAfterSubmit, valKeyUpBefSubmit }
 })();
 
 
