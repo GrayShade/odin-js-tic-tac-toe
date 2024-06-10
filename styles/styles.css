@@ -25,6 +25,8 @@ select {
 
 body {
   height: 100vh;
+  display: flex;
+  flex-direction: column;
   overflow: visible;
   box-sizing: border-box;
   margin: 0px;
@@ -33,7 +35,10 @@ body {
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center center;
+  background-attachment: fixed;
   font-family: EraserRegular;
+  justify-content: space-between;
+  align-items: center;
 }
 
 #header {
@@ -49,7 +54,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 80%;
+  /* height: 80%; */
   justify-content: flex-start;
 }
 
@@ -254,4 +259,6 @@ input:placeholder-shown {
 
 #footer {
   height: 5%;
+  display: flex;
+  align-items: center;
 }
