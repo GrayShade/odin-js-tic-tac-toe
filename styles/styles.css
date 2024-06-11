@@ -105,6 +105,9 @@ body {
 #game-options {
   text-align: center;
   font-size: 3em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .game-options-p {
@@ -116,6 +119,7 @@ body {
 #replay-game-p,
 #player-turn-p {
   display: none;
+  max-width: fit-content;
 }
 
 #new-game-p,

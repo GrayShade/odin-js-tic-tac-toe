@@ -392,7 +392,7 @@ const gameObj = (() => {
     gameStarted = false;
     displayObj.updateBoard(boardObj.getBoard());
     winner = '';
-    displayObj.updateOptions('quit-game-p', `${playerObj.getMoveAndPlayers().currentPlayer} quit...`);
+    displayObj.updateOptions('quit-game-p', `${playerObj.getMoveAndPlayers().currentPlayer} retreated`);
   }
   const replayGame = () => {
     gameStarted = false
