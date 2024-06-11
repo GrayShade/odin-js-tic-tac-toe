@@ -147,9 +147,6 @@ body {
 
 /* modal related code starting here... */
 .modal {
-  /* font-family: 'OpenSans'; */
-  /* font-family: 'cursive'; */
-  /* font-weight: bold; */
   display: none;
   position: fixed;
   /* Sit on top */
@@ -281,7 +278,7 @@ input:placeholder-shown {
 }
 
 /*............................. Image credit related popup code.starting here.......................... */
-/* taken from  */
+/* taken from  https://www.w3schools.com/howto/howto_js_popup.asp*/
 /* Popup container */
 .popup {
   position: relative;

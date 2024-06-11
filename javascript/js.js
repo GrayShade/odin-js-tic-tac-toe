@@ -371,7 +371,6 @@ const gameObj = (() => {
     const p1Icon = playerObj.playerInfo[0].getP1Icon();
     const p2Icon = playerObj.playerInfo[1].getP2Icon();
     const boardArr = boardObj.getBoard();
-    // displayObj.updateBoard(boardArr);
     if (boardArr[x] == p1Icon) {
       playerObj.playerInfo[0].addToCountP1Icon();
       console.log(`plIcon Count: ${playerObj.playerInfo[0].getCountP1Icon()}`);
