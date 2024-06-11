@@ -67,7 +67,7 @@ body {
 
 #board {
   display: grid;
-  grid-template: 130px 130px 130px / 130px 130px 130px;
+  grid-template: 120px 120px 120px / 120px 120px 120px;
   padding: 1% 0% 1%;
 }
 
