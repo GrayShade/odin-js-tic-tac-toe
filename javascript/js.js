@@ -11,10 +11,9 @@ const listenersSetUp = (() => {
 
   const popup = document.querySelector('.popup');
   const myPopup = document.getElementById("myPopup");
-  const anchorLinkId = document.getElementById('anchorLinkId');
 
   const setModel = (() => {
-    newGameId.addEventListener('click', e => {
+    newGameId.addEventListener('click', () => {
       modal.style.display = 'block';
     });
 
@@ -40,7 +39,7 @@ const listenersSetUp = (() => {
     // remember that 'submit' event works only for form, not for buttons.
 
     let req_fields_status = false;
-    req_fields_status = gameObj.processSubmit(e);
+    req_fields_status = gameObj.validated(e);
 
     if (req_fields_status == true) {
       const modal = document.getElementById('myModal');
@@ -52,18 +51,18 @@ const listenersSetUp = (() => {
   for (let i = 0; i < req_inputs.length; i++) {
     const input = req_inputs[i];
     input.addEventListener('keyup', (e) => {
-      gameObj.validatedKeyUpBefSubmit(e);
+      gameObj.validated(e);
     });
   }
 
-  quitGameID.addEventListener('click', e => {
+  quitGameID.addEventListener('click', () => {
     gameObj.quitGame();
   });
-  replayGameId.addEventListener('click', e => {
+  replayGameId.addEventListener('click', () => {
     gameObj.replayGame();
   });
 
-  
+
   popup.addEventListener('click', () => {
     myPopup.classList.toggle("show");
   });
@@ -248,11 +247,10 @@ const playerObj = (() => {
 const gameObj = (() => {
   let winner = '';
   let gameStarted = false;
-  const validatedKeyUpBefSubmit = (e) => validationObj.valKeyUpBefSubmit(e);
-  const processSubmit = (e) => {
-    const req_inputs = document.querySelectorAll('input.required');
-    const afterSubmitStatus = validationObj.validateReqAfterSubmit(req_inputs);
-    return afterSubmitStatus;
+
+  const validated = (e) => {
+    const inputs = document.querySelectorAll('input');
+    return validationObj.validate(e, inputs);
   }
   const start = () => {
     gameStarted = true;
@@ -279,7 +277,6 @@ const gameObj = (() => {
       let moveMade = playerObj.getMoveAndPlayers();
       let currentMove = moveMade['currentMove'];
       let nextPlayer = moveMade['nextPlayer'];
-      let currentPlayerIcon = moveMade['currentPlayerIcon'];
       let nextPlayerIcon = moveMade['nextPlayerIcon'];
       // if cell is preoccupied:
       if (e.target.textContent != '') {
@@ -405,13 +402,21 @@ const gameObj = (() => {
     winner = '';
     displayObj.updateOptions('replay-game-p', 'Enter Names');
   }
-  return { processSubmit, start, processMove, quitGame, replayGame, validatedKeyUpBefSubmit }
+  
+  return { validated, start, processMove, quitGame, replayGame }
 })();
 
 // Creating validation module pattern:
 const validationObj = (() => {
-
-  const valKeyUpBefSubmit = (e) => {
+  const validate = (e, inputs) => {
+    if (e.target.id == 'form-button') {
+      return validateAfterSubmit(inputs);
+    }
+    else {
+      valKeyUpBefSubmit(e, inputs);
+    }
+  }
+  const valKeyUpBefSubmit = (e, inputsArr) => {
     if (e.key === 'Tab') {
       return;
     }
@@ -421,23 +426,36 @@ const validationObj = (() => {
     // & again even or correct input. So,:
     input.setCustomValidity("");
     const validityState = input.validity;
+    
     if (validityState.valid == true) {
       input.setCustomValidity("");
       input.style.borderColor = '#E5E7EB'
       input.reportValidity();
-    }
+    } 
     else {
       input.style.borderColor = 'red'
       input.setCustomValidity("Only single word, no space, 1 to 12 letters allowed!");
       input.reportValidity();
     }
+
+    let valuesArr = [];
+    for (let i = 0; i < inputsArr.length; i++) {
+      valuesArr.push(inputsArr[i].value);
+    }
+      const checkSameInputs = valuesArr.every((val, i, valuesArr) => val == valuesArr[0]);
+      if (checkSameInputs === true && !valuesArr.includes('')) {
+        input.setCustomValidity("Names can't be same!");
+        input.reportValidity();
+      }
+    
   }
 
-  const validateReqAfterSubmit = (req_inputs) => {
+  const validateAfterSubmit = (inputsArr) => {
     const validityArr = [];
-    for (let i = 0; i < req_inputs.length; i++) {
-      const input = req_inputs[i];
+    for (let i = 0; i < inputsArr.length; i++) {
+      const input = inputsArr[i];
       const validityState = input.validity;
+      
       if (validityState.valueMissing) {
         input.setCustomValidity("Input can't be empty!");
       } else if (validityState.rangeUnderflow) {
@@ -446,14 +464,15 @@ const validationObj = (() => {
         input.setCustomValidity("Letters can't be more than 12!");
       } else if (validityState.patternMismatch) {
         input.setCustomValidity("Only single word, no space, 1 to 12 letters allowed!");
-      }
+      } 
       // this default else is a must:
       else {
         input.setCustomValidity("");
       }
+      
       validityArr.push(input.reportValidity());
     }
-
+    
     if (validityArr.includes(false)) {
       return false;
     }
@@ -461,7 +480,7 @@ const validationObj = (() => {
     return true;
 
   }
-  return { validateReqAfterSubmit, valKeyUpBefSubmit }
+  return { validate, validateAfterSubmit, valKeyUpBefSubmit }
 })();
 
 

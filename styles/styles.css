@@ -268,7 +268,6 @@ input:placeholder-shown {
   height: 5%;
   display: flex;
   align-items: center;
-  /* color: #a9a9a9; */
   justify-content: flex-end;
 }
 
@@ -322,18 +321,5 @@ input:placeholder-shown {
 /* Toggle this class when clicking on the popup container (hide and show the popup) */
 .popup .show {
   visibility: visible;
-  /* -webkit-animation: fadeIn 1s;
-  animation: fadeIn 1s */
 }
-
-/* Add animation (fade in the popup) */
-/* @-webkit-keyframes fadeIn {
-  from {opacity: 0;}
-  to {opacity: 1;}
-}
-
-@keyframes fadeIn {
-  from {opacity: 0;}
-  to {opacity:1 ;}
-} */
 /*............................. Image credit related popup code ending here........................... */
