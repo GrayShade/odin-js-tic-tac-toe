@@ -5,15 +5,12 @@ const listenersSetUp = (() => {
   const replayGameId = document.getElementById('replay-game-p');
   const submitBtnId = document.getElementById('form-button');
   const req_inputs = document.querySelectorAll('input');
-
-  const modal = document.getElementById('myModal');
-  const span = document.getElementsByClassName("close")[0];
-
   const popup = document.querySelector('.popup');
-  const myPopup = document.getElementById("myPopup");
-  const anchorLinkId = document.getElementById('anchorLinkId');
 
   const setModel = (() => {
+    const modal = document.getElementById('myModal');
+    const span = document.getElementsByClassName("close")[0];
+
     newGameId.addEventListener('click', e => {
       modal.style.display = 'block';
     });
@@ -55,7 +52,6 @@ const listenersSetUp = (() => {
       gameObj.validatedKeyUpBefSubmit(e);
     });
   }
-
   quitGameID.addEventListener('click', e => {
     gameObj.quitGame();
   });
@@ -65,16 +61,14 @@ const listenersSetUp = (() => {
 
   
   popup.addEventListener('click', () => {
+    var myPopup = document.getElementById("myPopup");
     myPopup.classList.toggle("show");
   });
 
-  window.addEventListener('click', e => {
-    // Toggle to hide popup if it is currently showing. 2nd condition prevents
-    // closing of popup when it is opened by clicking on image credit link:
-    if (myPopup.classList.contains('show') && e.target.id != 'anchorLinkId') {
-      myPopup.classList.toggle("show");
-    }
-  });
+  document.addEventListener('click', () => {
+    var myPopup = document.getElementById("myPopup");
+    myPopup.classList.toggle("hide");
+  })
 
 })();
 // .....................listeners module pattern ending here.......................

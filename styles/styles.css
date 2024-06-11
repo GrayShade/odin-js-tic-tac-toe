@@ -61,14 +61,14 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* height: 80%; */
+  height: 80%;
   justify-content: flex-start;
 }
 
 #board {
   display: grid;
   grid-template: 130px 130px 130px / 130px 130px 130px;
-  padding: 2% 0% 3%;
+  padding: 1% 0% 1%;
 }
 
 .board-cells,
@@ -268,7 +268,7 @@ input:placeholder-shown {
   height: 5%;
   display: flex;
   align-items: center;
-  color: #a9a9a9;
+  /* color: #a9a9a9; */
   justify-content: flex-end;
 }
 
@@ -281,10 +281,6 @@ input:placeholder-shown {
   font-style: italic;
 }
 
-
-
-
-
 /*............................. Image credit related popup code.starting here.......................... */
 /* taken from  */
 /* Popup container */
@@ -292,7 +288,7 @@ input:placeholder-shown {
   position: relative;
   display: inline-block;
   cursor: pointer;
-  padding-right: 3%;
+  padding-right: 7%;
 }
 
 /* The actual popup (appears on top) */
