@@ -373,7 +373,7 @@ const gameObj = (() => {
     const boardArr = boardObj.getBoard();
     if (boardArr[x] == p1Icon) {
       playerObj.playerInfo[0].addToCountP1Icon();
-      console.log(`plIcon Count: ${playerObj.playerInfo[0].getCountP1Icon()}`);
+      // console.log(`plIcon Count: ${playerObj.playerInfo[0].getCountP1Icon()}`);
       if (playerObj.playerInfo[0].getCountP1Icon() == 3) {
         winner = p1Name;
       }
@@ -381,7 +381,7 @@ const gameObj = (() => {
     else
       if (boardArr[x] == p2Icon) {
         playerObj.playerInfo[1].addToCountP2Icon();
-        console.log(`p2Icon Count: ${playerObj.playerInfo[1].getCountP2Icon()}`);
+        // console.log(`p2Icon Count: ${playerObj.playerInfo[1].getCountP2Icon()}`);
         if (playerObj.playerInfo[1].getCountP2Icon() == 3) {
           winner = p2Name;
         }
@@ -401,7 +401,7 @@ const gameObj = (() => {
     winner = '';
     displayObj.updateOptions('replay-game-p', 'Enter Names');
   }
-  
+
   return { validated, start, processMove, quitGame, replayGame }
 })();
 
@@ -420,41 +420,58 @@ const validationObj = (() => {
       return;
     }
     const input = e.target;
+    let valuesArr = [];
+
     // if form was submitted before, then setCustomValidity has some
     // value already which will cause error message to be shown again 
     // & again even or correct input. So,:
     input.setCustomValidity("");
     const validityState = input.validity;
-    
+
     if (validityState.valid == true) {
       input.setCustomValidity("");
       input.style.borderColor = '#E5E7EB'
       input.reportValidity();
-    } 
+    }
     else {
-      input.style.borderColor = 'red'
+      input.style.borderColor = 'red';
       input.setCustomValidity("Only single word, no space, 1 to 12 letters allowed!");
       input.reportValidity();
     }
 
-    let valuesArr = [];
-    for (let i = 0; i < inputsArr.length; i++) {
-      valuesArr.push(inputsArr[i].value);
-    }
-      const checkSameInputs = valuesArr.every((val, i, valuesArr) => val == valuesArr[0]);
-      if (checkSameInputs === true && !valuesArr.includes('')) {
-        input.setCustomValidity("Names can't be same!");
-        input.reportValidity();
+    if (areSameInputs(inputsArr, valuesArr) && !valuesArr.includes('')) {
+      for (let i = 0; i < inputsArr.length; i++) {
+        inputsArr[i].style.borderColor = 'red';
       }
-    
+      input.setCustomValidity("Names can't be same!");
+      input.reportValidity();
+    }
+    else {
+      for (let i = 0; i < inputsArr.length; i++) {
+        inputsArr[i].setCustomValidity("");
+        if (inputsArr[i].validity.valid) {
+          inputsArr[i].style.borderColor = '#E5E7EB';
+          // inputsArr[i].setCustomValidity("");
+          // input.reportValidity();
+        }
+        else {
+          if (inputsArr[i].value != '') { 
+            inputsArr[i].style.borderColor = 'red';
+            input.setCustomValidity("Only single word, no space, 1 to 12 letters allowed!");
+          }          
+        }
+      }
+    }
   }
 
   const validateAfterSubmit = (inputsArr) => {
+    let valuesArr = [];
+
     const validityArr = [];
     for (let i = 0; i < inputsArr.length; i++) {
       const input = inputsArr[i];
       const validityState = input.validity;
-      
+
       if (validityState.valueMissing) {
         input.setCustomValidity("Input can't be empty!");
       } else if (validityState.rangeUnderflow) {
@@ -463,22 +480,31 @@ const validationObj = (() => {
         input.setCustomValidity("Letters can't be more than 12!");
       } else if (validityState.patternMismatch) {
         input.setCustomValidity("Only single word, no space, 1 to 12 letters allowed!");
-      } 
-      // this default else is a must:
+      } else if (areSameInputs(inputsArr, valuesArr) === true && !valuesArr.includes('')) {
+        input.style.borderColor = 'red';
+        input.setCustomValidity("Names can't be same!");
+      }
+      // this default else is a must as if there is no error, don't show one:
       else {
         input.setCustomValidity("");
       }
-      
+
       validityArr.push(input.reportValidity());
     }
-    
     if (validityArr.includes(false)) {
       return false;
     }
-
     return true;
-
   }
+
+  function areSameInputs(inputsArr, valuesArr) {
+    // Now some custom validity:
+    for (let i = 0; i < inputsArr.length; i++) {
+      valuesArr.push(inputsArr[i].value);
+    }
+    return valuesArr.every((val, i, valuesArr) => val == valuesArr[0]);
+  }
+
   return { validate, validateAfterSubmit, valKeyUpBefSubmit }
 })();
 
