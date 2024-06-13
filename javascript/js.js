@@ -4,7 +4,7 @@ const listenersSetUp = (() => {
   const quitGameID = document.getElementById('quit-game-p');
   const replayGameId = document.getElementById('replay-game-p');
   const submitBtnId = document.getElementById('form-button');
-  const req_inputs = document.querySelectorAll('input');
+  const reqInputs = document.querySelectorAll('input');
 
   const modal = document.getElementById('myModal');
   const span = document.getElementsByClassName("close")[0];
@@ -38,18 +38,18 @@ const listenersSetUp = (() => {
   submitBtnId.addEventListener(('click'), e => {
     // remember that 'submit' event works only for form, not for buttons.
 
-    let req_fields_status = false;
-    req_fields_status = gameObj.validated(e);
+    let reqFieldsStatus = false;
+    reqFieldsStatus = gameObj.validated(e);
 
-    if (req_fields_status == true) {
+    if (reqFieldsStatus == true) {
       const modal = document.getElementById('myModal');
       modal.style.display = 'none';
       gameObj.start();
     }
   });
 
-  for (let i = 0; i < req_inputs.length; i++) {
-    const input = req_inputs[i];
+  for (let i = 0; i < reqInputs.length; i++) {
+    const input = reqInputs[i];
     input.addEventListener('keyup', (e) => {
       gameObj.validated(e);
     });
@@ -61,7 +61,6 @@ const listenersSetUp = (() => {
   replayGameId.addEventListener('click', () => {
     gameObj.replayGame();
   });
-
 
   popup.addEventListener('click', () => {
     myPopup.classList.toggle("show");
@@ -408,20 +407,20 @@ const gameObj = (() => {
 // Creating validation module pattern:
 const validationObj = (() => {
   const validate = (e, inputs) => {
+    let valuesArr = removeAllInputsSpaces(inputs);
     if (e.target.id == 'form-button') {
-      return validateAfterSubmit(inputs);
+      return validateAfterSubmit(inputs, valuesArr);
     }
     else {
-      valKeyUpBefSubmit(e, inputs);
+      valKeyUpBefSubmit(e, inputs, valuesArr);
     }
   }
-  const valKeyUpBefSubmit = (e, inputsArr) => {
+  const valKeyUpBefSubmit = (e, inputsArr, valuesArr) => {
     if (e.key === 'Tab') {
       return;
     }
     const input = e.target;
-    let valuesArr = [];
-
+    
     // if form was submitted before, then setCustomValidity has some
     // value already which will cause error message to be shown again 
     // & again even or correct input. So,:
@@ -439,33 +438,11 @@ const validationObj = (() => {
       input.reportValidity();
     }
 
-    if (areSameInputs(inputsArr, valuesArr) && !valuesArr.includes('')) {
-      for (let i = 0; i < inputsArr.length; i++) {
-        inputsArr[i].style.borderColor = 'red';
-      }
-      input.setCustomValidity("Names can't be same!");
-      input.reportValidity();
-    }
-    else {
-      for (let i = 0; i < inputsArr.length; i++) {
-        inputsArr[i].setCustomValidity("");
-        if (inputsArr[i].validity.valid) {
-          inputsArr[i].style.borderColor = '#E5E7EB';
-          // inputsArr[i].setCustomValidity("");
-          // input.reportValidity();
-        }
-        else {
-          if (inputsArr[i].value != '') { 
-            inputsArr[i].style.borderColor = 'red';
-            input.setCustomValidity("Only single word, no space, 1 to 12 letters allowed!");
-          }          
-        }
-      }
-    }
+    processNamesPair(inputsArr, valuesArr, input);
+
   }
 
-  const validateAfterSubmit = (inputsArr) => {
-    let valuesArr = [];
+  const validateAfterSubmit = (inputsArr, valuesArr) => {
 
     const validityArr = [];
     for (let i = 0; i < inputsArr.length; i++) {
@@ -480,8 +457,7 @@ const validationObj = (() => {
         input.setCustomValidity("Letters can't be more than 12!");
       } else if (validityState.patternMismatch) {
         input.setCustomValidity("Only single word, no space, 1 to 12 letters allowed!");
-      } else if (areSameInputs(inputsArr, valuesArr) === true && !valuesArr.includes('')) {
-        input.style.borderColor = 'red';
+      } else if (areSameInputs(valuesArr) === true && !valuesArr.includes('')) {
         input.setCustomValidity("Names can't be same!");
       }
       // this default else is a must as if there is no error, don't show one:
@@ -497,14 +473,54 @@ const validationObj = (() => {
     return true;
   }
 
-  function areSameInputs(inputsArr, valuesArr) {
-    // Now some custom validity:
+  function removeAllInputsSpaces(inputsArr) {
+    let newInputArr = [];
     for (let i = 0; i < inputsArr.length; i++) {
-      valuesArr.push(inputsArr[i].value);
+      let singleInputArr = inputsArr[i].value.split('');
+      let noSpaceArr = singleInputArr.filter(char => {
+        return char != ' ';
+      });
+      const input = document.getElementById(`p${i + 1}`);
+      input.value = noSpaceArr.join('');
+      newInputArr.push(noSpaceArr.join(''));
     }
+    return newInputArr;
+  }
+
+  function areSameInputs(valuesArr) {
     return valuesArr.every((val, i, valuesArr) => val == valuesArr[0]);
   }
 
+
+  function processNamesPair(inputsArr, valuesArr, input) {
+    if (areSameInputs(valuesArr) && !valuesArr.includes('')) {
+      for (let i = 0; i < inputsArr.length; i++) {
+        inputsArr[i].style.borderColor = 'red';
+      }
+      input.setCustomValidity("Names can't be same!");
+      input.reportValidity();
+    }
+    else {
+      // if names are not same now, checking whole pair regardless of input
+      // & processing: 
+      for (let i = 0; i < inputsArr.length; i++) {
+        inputsArr[i].setCustomValidity("");
+        // if any of fields is valid, change its border. It'll help when names
+        // are not same now & there is no other error:
+        if (inputsArr[i].validity.valid) {
+          inputsArr[i].style.borderColor = '#E5E7EB';
+        }
+        else {
+          // As we have set validity to empty, again applying it after checking if it was
+          // required & error is not due to any empty field:
+          if (inputsArr[i].value != '') {
+            inputsArr[i].style.borderColor = 'red';
+            input.setCustomValidity("Only single word, no space, 1 to 12 letters allowed!");
+          }
+        }
+      }
+    }
+  }
   return { validate, validateAfterSubmit, valKeyUpBefSubmit }
 })();
 
