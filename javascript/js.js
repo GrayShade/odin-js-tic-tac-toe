@@ -372,7 +372,6 @@ const gameObj = (() => {
     const boardArr = boardObj.getBoard();
     if (boardArr[x] == p1Icon) {
       playerObj.playerInfo[0].addToCountP1Icon();
-      // console.log(`plIcon Count: ${playerObj.playerInfo[0].getCountP1Icon()}`);
       if (playerObj.playerInfo[0].getCountP1Icon() == 3) {
         winner = p1Name;
       }
@@ -380,7 +379,6 @@ const gameObj = (() => {
     else
       if (boardArr[x] == p2Icon) {
         playerObj.playerInfo[1].addToCountP2Icon();
-        // console.log(`p2Icon Count: ${playerObj.playerInfo[1].getCountP2Icon()}`);
         if (playerObj.playerInfo[1].getCountP2Icon() == 3) {
           winner = p2Name;
         }
